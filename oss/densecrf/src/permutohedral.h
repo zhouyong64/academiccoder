@@ -172,7 +172,8 @@ protected:
 public:
 	Permutohedral() :offset_( NULL ),barycentric_( NULL ),blur_neighbors_( NULL ),N_ ( 0 ),M_ ( 0 ),d_ ( 0 ) {
 	}
-	Permutohedral ( const Permutohedral& o ):offset_( NULL ),barycentric_( NULL ),blur_neighbors_( NULL ),N_ ( o.N_ ),M_ ( o.M_ ),d_ ( o.d_ )
+	Permutohedral ( const Permutohedral& o ):offset_( NULL ),barycentric_( NULL ),blur_neighbors_( NULL ),
+			N_ ( o.N_ ),M_ ( o.M_ ),d_ ( o.d_ )
 	{
 		if (o.barycentric_){
 			barycentric_ = new float[ (d_+1)*N_ ];
@@ -299,7 +300,8 @@ public:
 				sum += v;
 			}
 			
-			// Find the simplex we are in and store it in rank (where rank describes what position coorinate i has in the sorted order of the features values)
+			// Find the simplex we are in and store it in rank (where rank
+			//describes what position coorinate i has in the sorted order of the features values)
 			for( int i=0; i<=d_; i++ )
 				rank[i] = Zero;
 			for( int i=0; i<d_; i++ ){
@@ -347,7 +349,8 @@ public:
 				// Compute all vertices and their offset
 				for( int remainder=0; remainder<=d_; remainder++ ){
 					for( int i=0; i<d_; i++ ){
-						key[i] = frem0[i*blocksize+j] + canonical[ remainder*(d_+1) + (int)frank[i*blocksize+j] ];
+						key[i] = frem0[i*blocksize+j] + canonical[ remainder*(d_+1) + (int)frank[i*
+						                                                                blocksize+j] ];
 					}
 					offset_[ (j+k)*(d_+1)+remainder ] = hash_table.find( key, true );
 					barycentric_[ (j+k)*(d_+1)+remainder ] = barycentric[ j*(d_+2)+remainder ];
@@ -460,7 +463,8 @@ public:
 				sum += rd;
 			}
 			
-			// Find the simplex we are in and store it in rank (where rank describes what position coorinate i has in the sorted order of the features values)
+			// Find the simplex we are in and store it in rank (where rank describes what position
+			//coorinate i has in the sorted order of the features values)
 			for( int i=0; i<=d_; i++ )
 				rank[i] = 0;
 			for( int i=0; i<d_; i++ ){
@@ -546,7 +550,8 @@ public:
 #endif
 
 #ifdef SSE_PERMUTOHEDRAL
-	void compute ( __m128* out, const __m128* in, int value_size, int in_offset=0, int out_offset=0, int in_size = -1, int out_size = -1 ) const
+	void compute ( __m128* out, const __m128* in, int value_size, int in_offset=0, int out_offset=0,
+			int in_size = -1, int out_size = -1 ) const
 	{
 		if ( in_size == -1)  in_size = N_ -  in_offset;
 		if (out_size == -1) out_size = N_ - out_offset;
@@ -608,7 +613,8 @@ public:
 		_mm_free( values );
 		_mm_free( new_values );
 	}
-	void compute ( float* out, const float* in, int value_size, int in_offset=0, int out_offset=0, int in_size = -1, int out_size = -1 ) const
+	void compute ( float* out, const float* in, int value_size, int in_offset=0, int out_offset=0,
+			int in_size = -1, int out_size = -1 ) const
 	{
 		if ( in_size == -1)  in_size = N_ -  in_offset;
 		if (out_size == -1) out_size = N_ - out_offset;
@@ -675,7 +681,8 @@ public:
 		_mm_free( new_values );
 	}
 #else
-	void compute ( float* out, const float* in, int value_size, int in_offset=0, int out_offset=0, int in_size = -1, int out_size = -1 ) const
+	void compute ( float* out, const float* in, int value_size, int in_offset=0, int out_offset=0,
+			int in_size = -1, int out_size = -1 ) const
 	{
 		if ( in_size == -1)  in_size = N_ -  in_offset;
 		if (out_size == -1) out_size = N_ - out_offset;
