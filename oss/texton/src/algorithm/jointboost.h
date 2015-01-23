@@ -40,7 +40,9 @@
 #endif
 
 // Optimize a weak classifier and return it's error
-double optimizeWeak( const QVector< double > & wi, const QVector< double > & wizi, int NT, const QVector<double> & kc, const QVector<double> & kc_num, const QVector<double> & kc_den, unsigned long long sharing, int * thres_id = NULL, double * r_a = NULL, double * r_b = NULL );
+double optimizeWeak( const QVector< double > & wi, const QVector< double > & wizi, int NT,
+		const QVector<double> & kc, const QVector<double> & kc_num, const QVector<double> & kc_den,
+		unsigned long long sharing, int * thres_id = NULL, double * r_a = NULL, double * r_b = NULL );
 
 // Training a weak learner
 template<typename W>
@@ -53,7 +55,9 @@ struct BoostRound{
 
 // Train a single random weak classifier
 template<typename W, typename D>
-BoostRound<W> trainSingle( const QVector<D> & data, const QVector< signed char > & gt, int n_classes, int n_thresholds, const QVector<double> & class_weight, const QVector<double> & kc, const QVector<double> & kc_num, const QVector<double> & kc_den ){
+BoostRound<W> trainSingle( const QVector<D> & data, const QVector< signed char > & gt, int n_classes,
+		int n_thresholds, const QVector<double> & class_weight, const QVector<double> & kc,
+		const QVector<double> & kc_num, const QVector<double> & kc_den ){
 	BoostRound<W> r;
 	r.error = 1e100;
 	r.a = r.b = 0;
@@ -116,7 +120,8 @@ BoostRound<W> trainSingle( const QVector<D> & data, const QVector< signed char >
 				unsigned long long new_sharing_set = sharing_set | (1ll << bit);
 				int tid;
 				double a, b;
-				double score = optimizeWeak( wi, wizi, thresholds.count()+1, kc, kc_num, kc_den, new_sharing_set, &tid, &a, &b );
+				double score = optimizeWeak( wi, wizi, thresholds.count()+1, kc, kc_num, kc_den, new_sharing_set,
+						&tid, &a, &b );
 				if (score < lbest){
 					lbest = score;
 					lbest_sharing = new_sharing_set;
@@ -150,10 +155,14 @@ struct TBBTrainRound{
 	const QVector<double> & kc;
 	const QVector<double> & kc_num;
 	const QVector<double> & kc_den;
-	TBBTrainRound( const TBBTrainRound & o, tbb::split ):data(o.data),gt(o.gt),n_classes(o.n_classes),n_thresholds(o.n_thresholds),class_weight(o.class_weight),kc(o.kc),kc_num(o.kc_num),kc_den(o.kc_den){
+	TBBTrainRound( const TBBTrainRound & o, tbb::split ):data(o.data),gt(o.gt),n_classes(o.n_classes),
+			n_thresholds(o.n_thresholds),class_weight(o.class_weight),kc(o.kc),kc_num(o.kc_num),kc_den(o.kc_den){
 		best.error = 1e100;
 	}
-	TBBTrainRound( const QVector<D> & data, const QVector< signed char > & gt, int n_classes, int n_thresholds, const QVector<double> & class_weight, const QVector<double> & kc, const QVector<double> & kc_num, const QVector<double> & kc_den ):data(data),gt(gt),n_classes(n_classes),n_thresholds(n_thresholds),class_weight(class_weight),kc(kc),kc_num(kc_num),kc_den(kc_den){
+	TBBTrainRound( const QVector<D> & data, const QVector< signed char > & gt, int n_classes, int n_thresholds,
+			const QVector<double> & class_weight, const QVector<double> & kc, const QVector<double> & kc_num,
+			const QVector<double> & kc_den ):data(data),gt(gt),n_classes(n_classes),n_thresholds(n_thresholds),
+			class_weight(class_weight),kc(kc),kc_num(kc_num),kc_den(kc_den){
 		best.error = 1e100;
 	}
 	void join( const TBBTrainRound & o ){
@@ -164,7 +173,8 @@ struct TBBTrainRound{
 		// Text a number of weak classifiers
 		best.error = 1e100;
 		for( int i=rng.begin(); i<rng.end(); i++ ){
-			BoostRound<W> r = trainSingle<W,D>( data, gt, n_classes, n_thresholds, class_weight, kc, kc_num, kc_den );
+			BoostRound<W> r = trainSingle<W,D>( data, gt, n_classes, n_thresholds, class_weight, kc, kc_num,
+					kc_den );
 			if (r.error < best.error)
 				best = r;
 		}
@@ -173,7 +183,9 @@ struct TBBTrainRound{
 
 // Train a single random weak classifier using tbb
 template<typename W, typename D>
-BoostRound<W> trainRound( const QVector<D> & data, const QVector< signed char > & gt, int n_classes, int n_classifiers, int n_thresholds, const QVector<double> & class_weight, const QVector<double> & kc, const QVector<double> & kc_num, const QVector<double> & kc_den ){
+BoostRound<W> trainRound( const QVector<D> & data, const QVector< signed char > & gt, int n_classes,
+		int n_classifiers, int n_thresholds, const QVector<double> & class_weight, const QVector<double> & kc,
+		const QVector<double> & kc_num, const QVector<double> & kc_den ){
 	TBBTrainRound<W,D> rounds( data, gt, n_classes, n_thresholds, class_weight, kc, kc_num, kc_den );
 	tbb::parallel_reduce( tbb::blocked_range<int>(0, n_classifiers, 4), rounds );
 	return rounds.best;
@@ -181,7 +193,9 @@ BoostRound<W> trainRound( const QVector<D> & data, const QVector< signed char > 
 #else
 // Train a single random weak classifier
 template<typename W, typename D>
-BoostRound<W> trainRound( const QVector<D> & data, const QVector< signed char > & gt, int n_classes, int n_classifiers, int n_thresholds, const QVector<double> & class_weight, const QVector<double> & kc, const QVector<double> & kc_num, const QVector<double> & kc_den ){
+BoostRound<W> trainRound( const QVector<D> & data, const QVector< signed char > & gt, int n_classes,
+		int n_classifiers, int n_thresholds, const QVector<double> & class_weight, const QVector<double> & kc,
+		const QVector<double> & kc_num, const QVector<double> & kc_den ){
 	// Text a number of weak classifiers
 	BoostRound<W> best;
 	best.error = 1e100;
@@ -207,7 +221,8 @@ protected:
 	
 public:
 template<typename D>
-	void train( const QVector<D> & data, const QVector< signed char > & gt, int n_classes, int n_rounds, int n_classifiers, int n_thresholds ){
+	void train( const QVector<D> & data, const QVector< signed char > & gt, int n_classes, int n_rounds,
+			int n_classifiers, int n_thresholds ){
 		a_.clear();
 		b_.clear();
 		sharing_set_.clear();
@@ -242,7 +257,8 @@ template<typename D>
 			
 			timer.restart();
 			// Text a number of weak classifiers
-			BoostRound<W> best = trainRound<W,D>( data, gt, n_classes, n_classifiers, n_thresholds, class_weight, kc, kc_num, kc_den );
+			BoostRound<W> best = trainRound<W,D>( data, gt, n_classes, n_classifiers, n_thresholds, class_weight,
+					kc, kc_num, kc_den );
 			t2 = timer.elapsed() / 1000.0; timer.restart();
 			
 			// Let's recompute a and b, just to be sure
@@ -288,8 +304,11 @@ template<typename D>
 			// Finalize the weak learner [upsample, ...]
 			best.weak.finalize();
 			weak_learner_.append( best.weak );
-			qDebug("     err: %f (==%f) time: [%0.3f %0.3f %0.3f    %f]", best.error, error, t1, t2, timer.elapsed()/1000.0, t1+t2+timer.elapsed()/1000.0);
-			qDebug("     sset: 0x%llx a: %f (==%f) b: %f (==%f) rect: [%d %d - %d %d] thres: %f", best.sharing_set, best.a, a, best.b, b, best.weak.x1_, best.weak.y1_, best.weak.x2_, best.weak.y2_, best.weak.threshold_ );
+			qDebug("     err: %f (==%f) time: [%0.3f %0.3f %0.3f    %f]", best.error, error, t1, t2,
+					timer.elapsed()/1000.0, t1+t2+timer.elapsed()/1000.0);
+			qDebug("     sset: 0x%llx a: %f (==%f) b: %f (==%f) rect: [%d %d - %d %d] thres: %f",
+					best.sharing_set, best.a, a, best.b, b, best.weak.x1_, best.weak.y1_, best.weak.x2_,
+					best.weak.y2_, best.weak.threshold_ );
 // 			if ((best.error-error) / (best.error+error) > 10e-5){
 // 				qFatal( "Oops fucked up! %f", (best.error-error) / (best.error+error) );
 // 			}
