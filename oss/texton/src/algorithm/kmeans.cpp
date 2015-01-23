@@ -74,14 +74,16 @@ void KMeans::train(const float * features, int feature_size, int M, int N) {
 		for( int i=0; i<N; i++ )
 			if (count[i] == 0)
 				// If the current cluster dies, choose a random feature
-				memcpy( center_.data() + feature_size*i, features + (random() % M)*feature_size, feature_size*sizeof(float) );
+				memcpy( center_.data() + feature_size*i, features + (random() % M)*feature_size,
+						feature_size*sizeof(float) );
 			else
 				// otherwise normalize
 				for( int j=0; j<feature_size; j++ )
 					center_[ i*feature_size+j ] *= 1.0 / count[i];
 	}
 }
-KMeans::KMeans(const KMeans& o) :center_(o.center_), feature_size_(o.feature_size_), n_center_(o.n_center_), kd_tree_(NULL), ann_points_(NULL) {
+KMeans::KMeans(const KMeans& o) :center_(o.center_), feature_size_(o.feature_size_),
+		n_center_(o.n_center_), kd_tree_(NULL), ann_points_(NULL) {
 }
 KMeans::KMeans() :feature_size_(0), n_center_(0), kd_tree_(NULL), ann_points_(NULL) {
 }
@@ -116,7 +118,9 @@ class TBBEvaluateMany{
 	short * res;
 	ANNkd_tree * kd_tree;
 public:
-	TBBEvaluateMany( const float * features, int feature_size, int N, short * res, ANNkd_tree * kd_tree ):features(features),feature_size(feature_size),N(N),res(res),kd_tree(kd_tree){
+	TBBEvaluateMany( const float * features, int feature_size, int N, short * res,
+			ANNkd_tree * kd_tree ):features(features),feature_size(feature_size),N(N),
+			res(res),kd_tree(kd_tree){
 	}
 	void operator()( tbb::blocked_range<int> rng ) const{
 		ANNidx id;
@@ -135,7 +139,8 @@ void KMeans::evaluateMany( const float * features, int feature_size, int N, shor
 	if (!kd_tree_)
 		initAnn();
 	// Our patched version of ANN works with TBB
-	tbb::parallel_for(tbb::blocked_range<int>(0, N, 100), TBBEvaluateMany(features, feature_size, N, res, kd_tree_));
+	tbb::parallel_for(tbb::blocked_range<int>(0, N, 100), TBBEvaluateMany(features, feature_size,
+			N, res, kd_tree_));
 }
 #else
 void KMeans::evaluateMany( const float * features, int feature_size, int N, short * res ) const{

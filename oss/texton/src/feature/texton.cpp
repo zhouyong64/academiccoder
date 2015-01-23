@@ -53,19 +53,23 @@ public:
 	MatrixXd covariance;
 	double count;
 	
-	TBBComputeFeatures( const QSharedPointer<Feature> & feature, const QVector< Image< float > >& lab_images, const QVector< QString >& names, int n_samples ): feature(feature),lab_images(lab_images),names(names),n_samples(n_samples),feature_size(feature->size()){
+	TBBComputeFeatures( const QSharedPointer<Feature> & feature, const QVector< Image< float > >& lab_images,
+			const QVector< QString >& names, int n_samples ): feature(feature),lab_images(lab_images),
+			names(names),n_samples(n_samples),feature_size(feature->size()){
 		mean = VectorXd::Zero( feature_size );
 		covariance = MatrixXd::Zero( feature_size, feature_size );
 		count = 0;
 	}
-	TBBComputeFeatures( const TBBComputeFeatures & o, tbb::split ):feature(o.feature),lab_images(o.lab_images),names(o.names),n_samples(o.n_samples),feature_size(o.feature_size){
+	TBBComputeFeatures( const TBBComputeFeatures & o, tbb::split ):feature(o.feature),lab_images(o.lab_images),
+			names(o.names),n_samples(o.n_samples),feature_size(o.feature_size){
 		mean = VectorXd::Zero( feature_size );
 		covariance = MatrixXd::Zero( feature_size, feature_size );
 		count = 0;
 	}
 	void join( const TBBComputeFeatures & o ){
 		// Merge the sample
-		covariance = covariance + o.covariance + (o.mean - mean) * (o.mean - mean).transpose()*(1.0*count*o.count/(count+o.count));
+		covariance = covariance + o.covariance + (o.mean - mean) * (o.mean - mean).transpose()*(1.0*count*
+				o.count/(count+o.count));
 		mean = (count*mean + o.count*o.mean) / (count + o.count);
 		count = o.count + count;
 		features += o.features;
@@ -97,7 +101,9 @@ public:
 		}
 	}
 };
-void computeFeatures( QVector<float> & features, VectorXd & mean, MatrixXd & covariance, const QSharedPointer<Feature> & feature, const QVector< Image< float > >& lab_images, const QVector< QString >& names, int n_samples ){
+void computeFeatures( QVector<float> & features, VectorXd & mean, MatrixXd & covariance,
+		const QSharedPointer<Feature> & feature, const QVector< Image< float > >& lab_images,
+		const QVector< QString >& names, int n_samples ){
 	TBBComputeFeatures tbbf( feature, lab_images, names, n_samples );
 	tbb::parallel_reduce( tbb::blocked_range<int>(0, lab_images.count(), 4), tbbf );
 	
@@ -107,7 +113,9 @@ void computeFeatures( QVector<float> & features, VectorXd & mean, MatrixXd & cov
 	features = tbbf.features;
 }
 #else
-void computeFeatures( QVector<float> & features, VectorXd & mean, MatrixXd & covariance, const QSharedPointer<Feature> & feature, const QVector< Image< float > >& lab_images, const QVector< QString >& names, int n_samples ){
+void computeFeatures( QVector<float> & features, VectorXd & mean, MatrixXd & covariance,
+		const QSharedPointer<Feature> & feature, const QVector< Image< float > >& lab_images,
+		const QVector< QString >& names, int n_samples ){
 	int feature_size = feature->size();
 	int n_features = 0;
 	double samples_per_image = 1.0*n_samples / lab_images.count();
@@ -143,7 +151,8 @@ void computeFeatures( QVector<float> & features, VectorXd & mean, MatrixXd & cov
 	covariance = covariance / count;
 }
 #endif
-void Texton::train(const QVector< Image< float > >& lab_images, const QVector<QString> & names, int n_samples ) {
+void Texton::train(const QVector< Image< float > >& lab_images, const QVector<QString> & names,
+		int n_samples ) {
 	QVector< float > features;
 	int feature_size = feature_->size();
 	MatrixXd covariance;
@@ -158,7 +167,8 @@ void Texton::train(const QVector< Image< float > >& lab_images, const QVector<QS
 // 	transformation_ = covariance.diagonal().array().inverse().sqrt().matrix().asDiagonal();
 	// True Whitening
 	JacobiSVD< MatrixXd > svd( covariance, ComputeThinU | ComputeThinV );
-	transformation_ = svd.singularValues().array().inverse().sqrt().matrix().asDiagonal() * svd.matrixV().transpose();
+	transformation_ = svd.singularValues().array().inverse().sqrt().matrix().asDiagonal() *
+			svd.matrixV().transpose();
 	
 	// Whitening (zero mean, 1 stddev)
 	for( int i=0, k=0; i<n_features; i++ ){
@@ -194,27 +204,33 @@ class TBBTextonize{
 	const QVector< QString >& names;
 	const Texton & texton;
 public:
-	TBBTextonize(QVector< Image< short > > &r, const QVector< Image< float > >& lab_images, const QVector< QString >& names, const Texton & texton):r(r),lab_images(lab_images),names(names),texton(texton){
+	TBBTextonize(QVector< Image< short > > &r, const QVector< Image< float > >& lab_images,
+			const QVector< QString >& names, const Texton & texton):r(r),lab_images(lab_images),
+			names(names),texton(texton){
 	}
 	void operator()( tbb::blocked_range<int> rng ) const{
 		for( int i=rng.begin(); i<rng.end(); i++ )
 			r[i] = texton.textonize( lab_images[i], names[i] );
 	}
 };
-QVector< Image< short > > Texton::textonize(const QVector< Image< float > >& lab_images, const QVector< QString >& names) const {
+QVector< Image< short > > Texton::textonize(const QVector< Image< float > >& lab_images,
+		const QVector< QString >& names) const {
 	QVector< Image< short > > r( lab_images.count() );
-	tbb::parallel_for(tbb::blocked_range<int>(0, lab_images.count(), 1), TBBTextonize(r, lab_images, names, *this));
+	tbb::parallel_for(tbb::blocked_range<int>(0, lab_images.count(), 1), TBBTextonize(r, lab_images,
+			names, *this));
 	return r;
 }
 #else
-QVector< Image< short > > Texton::textonize(const QVector< Image< float > >& lab_images, const QVector< QString >& names) const {
+QVector< Image< short > > Texton::textonize(const QVector< Image< float > >& lab_images,
+		const QVector< QString >& names) const {
 	QVector< Image< short > > r;
 	for( int i=0; i<lab_images.count(); i++ )
 		r.append( textonize( lab_images[i], names[i] ) );
 	return r;
 }
 #endif
-void saveTextons(const QString& filename, const QVector< Image< short > >& textons, const QVector< QString >& names) {
+void saveTextons(const QString& filename, const QVector< Image< short > >& textons,
+		const QVector< QString >& names) {
 	QFile file( filename );
 	if (!file.open(QFile::WriteOnly))
 		qFatal( "Failed to save textons to '%s'", qPrintable( filename ) );

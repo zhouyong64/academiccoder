@@ -68,7 +68,8 @@ class TBBEvaluate{
 	const QVector<QString> & names;
 	const QString & save_dir;
 public:
-	TBBEvaluate( const TextonBoost & booster, const QVector< Image<short> > & textons, const QVector<QString> & names, const QString & save_dir ):booster(booster), textons(textons), names(names), save_dir(save_dir){}
+	TBBEvaluate( const TextonBoost & booster, const QVector< Image<short> > & textons, const QVector<QString> & names,
+			const QString & save_dir ):booster(booster), textons(textons), names(names), save_dir(save_dir){}
 	void operator()( tbb::blocked_range<int> rng ) const{
 		for( int i=rng.begin(); i<rng.end(); i++ ){
 			qDebug("Doing Image %d", i );
@@ -76,11 +77,13 @@ public:
 		}
 	}
 };
-void evaluate_all( const TextonBoost & booster, const QVector< Image<short> > & textons, const QVector<QString> & names, const QString & save_dir ){
+void evaluate_all( const TextonBoost & booster, const QVector< Image<short> > & textons, const QVector<QString> & names,
+		const QString & save_dir ){
 	tbb::parallel_for(tbb::blocked_range<int>(0, textons.size(), 1), TBBEvaluate(booster, textons, names, save_dir));
 }
 #else
-void evaluate_all( const TextonBoost & booster, const QVector< Image<short> > & textons, const QVector<QString> & names, const QString & save_dir ){
+void evaluate_all( const TextonBoost & booster, const QVector< Image<short> > & textons, const QVector<QString> & names,
+		const QString & save_dir ){
 	for( int i=0; i<textons.count(); i++ ){
 		qDebug("Doing Image %d", i );
 		evaluate( booster, textons[i], save_dir + "/" + names[i] + ".unary" );

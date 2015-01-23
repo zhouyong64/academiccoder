@@ -27,7 +27,9 @@
 
 #include "jointboost.h"
 
-double optimizeWeak( const QVector< double > & wi, const QVector< double > & wizi, int NT, const QVector<double> & kc, const QVector<double> & kc_num, const QVector<double> & kc_den, unsigned long long sharing, int * thres_id, double * r_a, double * r_b ) {
+double optimizeWeak( const QVector< double > & wi, const QVector< double > & wizi, int NT, const QVector<double> & kc,
+		const QVector<double> & kc_num, const QVector<double> & kc_den, unsigned long long sharing, int * thres_id,
+		double * r_a, double * r_b ) {
     // Precomputations
     double sum_wi = 0;
     double sum_wizi = 0;

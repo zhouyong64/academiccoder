@@ -94,7 +94,9 @@ public:
 		}
 		delete[] tmp2;
 	}
-	SemiMetricPotential(const float* features, int D, int N, float w, const SemiMetricFunction* function, bool per_pixel_normalization=true) :PottsPotential( features, D, N, w, per_pixel_normalization ),function_(function) {
+	SemiMetricPotential(const float* features, int D, int N, float w, const SemiMetricFunction* function,
+			bool per_pixel_normalization=true) :PottsPotential( features, D, N, w,
+					per_pixel_normalization ),function_(function) {
 	}
 };
 
@@ -147,7 +149,8 @@ void DenseCRF2D::addPairwiseGaussian ( float sx, float sy, float w, const SemiMe
 	addPairwiseEnergy( feature, 2, w, function );
 	delete [] feature;
 }
-void DenseCRF2D::addPairwiseBilateral ( float sx, float sy, float sr, float sg, float sb, const unsigned char* im, float w, const SemiMetricFunction * function ) {
+void DenseCRF2D::addPairwiseBilateral ( float sx, float sy, float sr, float sg, float sb, const unsigned char* im,
+		float w, const SemiMetricFunction * function ) {
 	float * feature = new float [N_*5];
 	for( int j=0; j<H_; j++ )
 		for( int i=0; i<W_; i++ ){

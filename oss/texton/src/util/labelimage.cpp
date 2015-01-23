@@ -150,7 +150,8 @@ LabelImage::LabelImage(int w, int h) : Image< signed char >( w, h ) {
 LabelImage::LabelImage(const QImage& qim, LabelType type): Image<signed char>( qim.width(), qim.height() ) {
 	init( qim, type );
 }
-LabelImage::LabelImage(const QImage& qim, const QMap< unsigned int, signed char >& map): Image<signed char>( qim.width(), qim.height() ) {
+LabelImage::LabelImage(const QImage& qim, const QMap< unsigned int, signed char >& map): Image<signed char>( qim.width(),
+		qim.height() ) {
 	init( qim, map );
 }
 LabelImage::LabelImage(const QImage& qim): Image<signed char>( qim.width(), qim.height() ) {

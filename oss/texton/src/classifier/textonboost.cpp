@@ -84,7 +84,8 @@ TextonClassifier TextonClassifier::random() {
 	// Randomly pick the rectangle
 #ifdef AREA_SAMPLING
 	// Rect size sampling proportional to the area of the final rectangle
-	double area = min_rect_size_*min_rect_size_ + (max_rect_size_*max_rect_size_ - min_rect_size_*min_rect_size_) * 1.0 * ::random() / RAND_MAX;
+	double area = min_rect_size_*min_rect_size_ + (max_rect_size_*max_rect_size_ -
+			min_rect_size_*min_rect_size_) * 1.0 * ::random() / RAND_MAX;
 	int mnw = ceil( qMax( (double)min_rect_size_, area / max_rect_size_ ) );
 	int mxw = floor( qMin( (double)max_rect_size_, area / min_rect_size_ ) );
 	int w = mnw + ::random()%(mxw-mnw+1);
@@ -129,7 +130,8 @@ Image<float> TextonClassifier::value(const Image<float>& im) const {
 	Image<float> r( im.width(), im.height() );
 	for( int j=0; j<im.height(); j++ )
 		for( int i=0; i<im.width(); i++ )
-			r(i,j) = TextonData( &im, i, j ).value( x1_, y1_, x2_, y2_, t_ ) / (sub_sample_factor_*sub_sample_factor_);
+			r(i,j) = TextonData( &im, i, j ).value( x1_, y1_, x2_, y2_, t_ ) / (sub_sample_factor_*
+					sub_sample_factor_);
 	return r;
 }
 bool TextonClassifier::classify(const TextonData& data) const {
@@ -140,14 +142,16 @@ Image<bool> TextonClassifier::classify(const Image<float>& im) const {
 	bool * rdata = r.data();
 	for( int j=0; j<im.height(); j++ )
 		for( int i=0; i<im.width(); i++, rdata++ )
-			*rdata = TextonData( &im, i, j ).value( x1_, y1_, x2_, y2_, t_ ) > threshold_*(sub_sample_factor_*sub_sample_factor_);
+			*rdata = TextonData( &im, i, j ).value( x1_, y1_, x2_, y2_, t_ ) > threshold_*
+			(sub_sample_factor_*sub_sample_factor_);
 	return r;
 }
 void TextonClassifier::fast_classify(const Image<float>& im, Image<bool> & r) const {
 	bool * rdata = r.data();
 	for( int j=0; j<im.height(); j++ )
 		for( int i=0; i<im.width(); i++, rdata++ )
-			*rdata = TextonData( &im, i, j ).value( x1_, y1_, x2_, y2_, t_ ) > threshold_*(sub_sample_factor_*sub_sample_factor_);
+			*rdata = TextonData( &im, i, j ).value( x1_, y1_, x2_, y2_, t_ ) > threshold_*
+			(sub_sample_factor_*sub_sample_factor_);
 }
 void TextonClassifier::setThreshold(float t) {
     threshold_ = t;
@@ -167,7 +171,8 @@ QDataStream& operator>>(QDataStream& s, TextonClassifier& c) {
 
 
 /**** TextonBoost ****/
-Image< float > TextonBoost::integrate(const Image< short int >& texton, const QVector< int >& n_textons, int subsample) const {
+Image< float > TextonBoost::integrate(const Image< short int >& texton, const QVector< int >& n_textons,
+		int subsample) const {
 	int nw = (texton.width()-1)/subsample + 1;
 	int nh = (texton.height()-1)/subsample + 1;
 	Image< float > r( nw, nh, texton_offset_.last() );
@@ -188,7 +193,8 @@ Image< float > TextonBoost::integrate(const Image< short int >& texton, const QV
 	return r;
 }
 // NOTE: train will clear all textons (so save memory)
-void TextonBoost::train( QVector< Image< short > >& textons, const QVector< LabelImage >& gt, int n_rounds, int n_classifiers, int n_thresholds, int subsample, int min_rect_size, int max_rect_size ) {
+void TextonBoost::train( QVector< Image< short > >& textons, const QVector< LabelImage >& gt, int n_rounds,
+		int n_classifiers, int n_thresholds, int subsample, int min_rect_size, int max_rect_size ) {
 	texton_offset_.fill( 0, textons.first().depth()+1 );
 	for( int k=0; k<textons.count(); k++ )
 		for( int i=0; i<textons[k].width()*textons[k].height(); i++ )
@@ -232,7 +238,8 @@ void TextonBoost::train( QVector< Image< short > >& textons, const QVector< Labe
 			}
 	}
 	
-	JointBoost<TextonClassifier>::train( data, groundtruth, n_classes, n_rounds, n_classifiers, n_thresholds );
+	JointBoost<TextonClassifier>::train( data, groundtruth, n_classes, n_rounds, n_classifiers,
+			n_thresholds );
 }
 Image< float > TextonBoost::evaluate(const Image< short >& textons) const {
 	TextonClassifier::sub_sample_factor_ = 1;

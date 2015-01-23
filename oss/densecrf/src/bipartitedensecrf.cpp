@@ -38,7 +38,8 @@ public:
 	~BPPottsPotential(){
 		deallocate( norm_ );
 	}
-	BPPottsPotential(const float* features1, const float* features2, int D, int N1, int N2, float w, bool per_pixel_normalization=true) :N1_(N1), N2_(N2), w_(w) {
+	BPPottsPotential(const float* features1, const float* features2, int D, int N1, int N2,
+			float w, bool per_pixel_normalization=true) :N1_(N1), N2_(N2), w_(w) {
 		float * features = new float[ (N1_+N2_)*D ];
 		memset( features, 0, (N1_+N2_)*D*sizeof(float) );
 		memcpy( features      , features1, N1_*D*sizeof(float) );
@@ -93,7 +94,9 @@ public:
 		}
 		delete[] tmp2;
 	}
-	BPSemiMetricPotential(const float* features1, const float* features2, int D, int N1, int N2, float w, const SemiMetricFunction* function, bool per_pixel_normalization=true) :BPPottsPotential( features1, features2, D, N1, N2, w, per_pixel_normalization ),function_(function) {
+	BPSemiMetricPotential(const float* features1, const float* features2, int D, int N1, int N2, float w,
+			const SemiMetricFunction* function, bool per_pixel_normalization=true) :BPPottsPotential( features1,
+					features2, D, N1, N2, w, per_pixel_normalization ),function_(function) {
 	}
 };
 
@@ -117,7 +120,8 @@ BipartiteDenseCRF::~BipartiteDenseCRF() {
 /////////////////////////////////
 /////  Pairwise Potentials  /////
 /////////////////////////////////
-void BipartiteDenseCRF::addPairwiseEnergy (const float* features1, const float* features2, int D, float w, const SemiMetricFunction * function) {
+void BipartiteDenseCRF::addPairwiseEnergy (const float* features1, const float* features2, int D, float w,
+		const SemiMetricFunction * function) {
 	if (function)
 		addPairwiseEnergy( new BPSemiMetricPotential( features1, features2, D, N_[0], N_[1], w, function ),
 		                   new BPSemiMetricPotential( features2, features1, D, N_[1], N_[0], w, function ) );
@@ -170,7 +174,8 @@ void BipartiteDenseCRF::stepInference( float relax ){
 		
 		// Add up all pairwise potentials
 		for( unsigned int i=0; i<pairwise_[!k].size(); i++ )
-			pairwise_[!k][i]->apply( dense_crfs_[k]->additional_unary_, dense_crfs_[!k]->current_, dense_crfs_[k]->tmp_, M_ );
+			pairwise_[!k][i]->apply( dense_crfs_[k]->additional_unary_, dense_crfs_[!k]->current_,
+					dense_crfs_[k]->tmp_, M_ );
 		
 		for( int i=0; i<N_[k]*M_; i++ )
 			dense_crfs_[k]->additional_unary_[i] = -dense_crfs_[k]->additional_unary_[i];

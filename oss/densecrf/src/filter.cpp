@@ -28,7 +28,8 @@
 #include "densecrf.h"
 
 
-Filter::Filter( const float * source_features, int N_source, const float * target_features, int N_target, int feature_dim ):n1_(N_source),o1_(0),n2_(N_target), o2_(N_source){
+Filter::Filter( const float * source_features, int N_source, const float * target_features, int N_target,
+		int feature_dim ):n1_(N_source),o1_(0),n2_(N_target), o2_(N_source){
     permutohedral_ = new Permutohedral();
     float * features = new float[ (N_source+N_target)*feature_dim ];
     memcpy( features, source_features, N_source*feature_dim*sizeof(float) );
