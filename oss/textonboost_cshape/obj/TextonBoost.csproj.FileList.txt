@@ -1,0 +1,10 @@
+bin\Release\TextonBoost.exe
+bin\Release\TextonBoost.pdb
+obj\Release\ResolveAssemblyReference.cache
+obj\Release\TextonBoost.exe
+obj\Release\TextonBoost.pdb
+bin\Debug\TextonBoost.exe
+bin\Debug\TextonBoost.pdb
+obj\Debug\ResolveAssemblyReference.cache
+obj\Debug\TextonBoost.exe
+obj\Debug\TextonBoost.pdb
