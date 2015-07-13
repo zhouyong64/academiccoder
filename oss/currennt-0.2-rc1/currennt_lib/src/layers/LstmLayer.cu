@@ -247,7 +247,8 @@ namespace {
 
             // calculate the cell state error
             real_t ogPeepWeight = ogPeepWeights[blockIdx];
-            real_t cellStateErr = ogAct * cell_output_act_fn_t::deriv(cell_output_act_fn_t::fn(cellState)) * outputErr + ogPeepWeight * ogDelta;
+            real_t cellStateErr = ogAct * cell_output_act_fn_t::deriv(cell_output_act_fn_t::fn(cellState)) * outputErr + 
+														ogPeepWeight * ogDelta;
 
             if (!firstCall) {
                 real_t nextFgAct        = fgActs         [outputIdx - prevOutputDistance];
@@ -522,7 +523,8 @@ namespace layers {
                                   const helpers::JsonValue &weightsSection,
                                   Layer<TDevice> &precedingLayer,
                                   bool bidirectional)
-        : TrainableLayer<TDevice>(layerChild, weightsSection, 4, (bidirectional ? 2 : 4) * helpers::safeJsonGetInt(layerChild, "size") + 3, precedingLayer)
+        : TrainableLayer<TDevice>(layerChild, weightsSection, 4, (bidirectional ? 2 : 4) * 
+				helpers::safeJsonGetInt(layerChild, "size") + 3, precedingLayer)
         , m_isBidirectional      (bidirectional)
     {
         if (m_isBidirectional && this->size() % 2 != 0)
@@ -536,9 +538,12 @@ namespace layers {
         _rawIgBiasWeights     = helpers::getRawPointer(this->weights()) + 4 * ls * pls + 1 * ls;
         _rawFgBiasWeights     = helpers::getRawPointer(this->weights()) + 4 * ls * pls + 2 * ls;
         _rawOgBiasWeights     = helpers::getRawPointer(this->weights()) + 4 * ls * pls + 3 * ls;
-        _rawIgPeepholeWeights = helpers::getRawPointer(this->weights()) + 4 * ls * pls + 4 * ls + 4 * ls * ls / (m_isBidirectional ? 2 : 1) + 0 * ls;
-        _rawFgPeepholeWeights = helpers::getRawPointer(this->weights()) + 4 * ls * pls + 4 * ls + 4 * ls * ls / (m_isBidirectional ? 2 : 1) + 1 * ls;
-        _rawOgPeepholeWeights = helpers::getRawPointer(this->weights()) + 4 * ls * pls + 4 * ls + 4 * ls * ls / (m_isBidirectional ? 2 : 1) + 2 * ls;
+        _rawIgPeepholeWeights = helpers::getRawPointer(this->weights()) + 4 * ls * pls + 4 * ls + 
+								4 * ls * ls / (m_isBidirectional ? 2 : 1) + 0 * ls;
+        _rawFgPeepholeWeights = helpers::getRawPointer(this->weights()) + 4 * ls * pls + 
+							4 * ls + 4 * ls * ls / (m_isBidirectional ? 2 : 1) + 1 * ls;
+        _rawOgPeepholeWeights = helpers::getRawPointer(this->weights()) + 4 * ls * pls + 4 * ls + 
+								4 * ls * ls / (m_isBidirectional ? 2 : 1) + 2 * ls;
 
         // create the forward and backward info structs
         forward_backward_info_t* fwbwArr[] = { &m_fw, &m_bw };
@@ -738,7 +743,8 @@ namespace layers {
     {
         TrainableLayer<TDevice>::loadSequences(fraction);
 
-        m_precLayerOutputsMatrix = helpers::Matrix<TDevice>(&this->precedingLayer().outputs(), this->precedingLayer().size(), this->curMaxSeqLength() * this->parallelSequences());
+        m_precLayerOutputsMatrix = helpers::Matrix<TDevice>(&this->precedingLayer().outputs(), 
+			this->precedingLayer().size(), this->curMaxSeqLength() * this->parallelSequences());
 
         // update the niag matrices
         forward_backward_info_t* fwbwArr[] = { &m_fw, &m_bw };
@@ -812,17 +818,22 @@ namespace layers {
             for (int timestep = 0; timestep < this->curMaxSeqLength(); ++timestep) {
                 // collect outputs from previous timestep
                 if (timestep != 0) {
-                    m_fw.timestepMatrices[timestep].niActs.addProduct(m_fw.weightMatrices.niInternal, true, m_fw.timestepMatrices[timestep-1].tmpOutputs, false);
-                    m_fw.timestepMatrices[timestep].igActs.addProduct(m_fw.weightMatrices.igInternal, true, m_fw.timestepMatrices[timestep-1].tmpOutputs, false);
-                    m_fw.timestepMatrices[timestep].fgActs.addProduct(m_fw.weightMatrices.fgInternal, true, m_fw.timestepMatrices[timestep-1].tmpOutputs, false);
-                    m_fw.timestepMatrices[timestep].ogActs.addProduct(m_fw.weightMatrices.ogInternal, true, m_fw.timestepMatrices[timestep-1].tmpOutputs, false);
+                    m_fw.timestepMatrices[timestep].niActs.addProduct(m_fw.weightMatrices.niInternal, true, 
+								m_fw.timestepMatrices[timestep-1].tmpOutputs, false);
+                    m_fw.timestepMatrices[timestep].igActs.addProduct(m_fw.weightMatrices.igInternal, true, 
+								m_fw.timestepMatrices[timestep-1].tmpOutputs, false);
+                    m_fw.timestepMatrices[timestep].fgActs.addProduct(m_fw.weightMatrices.fgInternal, true, 
+								m_fw.timestepMatrices[timestep-1].tmpOutputs, false);
+                    m_fw.timestepMatrices[timestep].ogActs.addProduct(m_fw.weightMatrices.ogInternal, true, 
+								m_fw.timestepMatrices[timestep-1].tmpOutputs, false);
                 }
 
                 // compute outputs
                 thrust::transform(
                     thrust::counting_iterator<int>(n*timestep),
                     thrust::counting_iterator<int>(n*timestep) + n,
-                    thrust::make_zip_iterator(thrust::make_tuple(thrust::constant_iterator<bool>(!timestep), thrust::constant_iterator<bool>(timestep >= this->curMinSeqLength()))),
+                    thrust::make_zip_iterator(thrust::make_tuple(thrust::constant_iterator<bool>(!timestep), 
+						thrust::constant_iterator<bool>(timestep >= this->curMinSeqLength()))),
                     m_fw.tmpOutputs.begin() + n*timestep,
                     fn
                     );
@@ -847,17 +858,22 @@ namespace layers {
                 for (int timestep = this->curMaxSeqLength()-1; timestep >= 0; --timestep) {
                     // collect outputs from previous timestep
                     if (timestep != this->curMaxSeqLength()-1) {
-                        m_bw.timestepMatrices[timestep].niActs.addProduct(m_bw.weightMatrices.niInternal, true, m_bw.timestepMatrices[timestep+1].tmpOutputs, false);
-                        m_bw.timestepMatrices[timestep].igActs.addProduct(m_bw.weightMatrices.igInternal, true, m_bw.timestepMatrices[timestep+1].tmpOutputs, false);
-                        m_bw.timestepMatrices[timestep].fgActs.addProduct(m_bw.weightMatrices.fgInternal, true, m_bw.timestepMatrices[timestep+1].tmpOutputs, false);
-                        m_bw.timestepMatrices[timestep].ogActs.addProduct(m_bw.weightMatrices.ogInternal, true, m_bw.timestepMatrices[timestep+1].tmpOutputs, false);
+                        m_bw.timestepMatrices[timestep].niActs.addProduct(m_bw.weightMatrices.niInternal, true, 
+								m_bw.timestepMatrices[timestep+1].tmpOutputs, false);
+                        m_bw.timestepMatrices[timestep].igActs.addProduct(m_bw.weightMatrices.igInternal, true, 
+								m_bw.timestepMatrices[timestep+1].tmpOutputs, false);
+                        m_bw.timestepMatrices[timestep].fgActs.addProduct(m_bw.weightMatrices.fgInternal, true, 
+								m_bw.timestepMatrices[timestep+1].tmpOutputs, false);
+                        m_bw.timestepMatrices[timestep].ogActs.addProduct(m_bw.weightMatrices.ogInternal, true, 
+								m_bw.timestepMatrices[timestep+1].tmpOutputs, false);
                     }
 
                     // compute outputs
                     thrust::transform(
                         thrust::counting_iterator<int>(n*timestep),
                         thrust::counting_iterator<int>(n*timestep) + n,
-                        thrust::make_zip_iterator(thrust::make_tuple(thrust::constant_iterator<bool>(timestep == this->curMaxSeqLength()-1), thrust::constant_iterator<bool>(timestep >= this->curMinSeqLength()))),
+                        thrust::make_zip_iterator(thrust::make_tuple(thrust::constant_iterator<bool>(timestep == this->curMaxSeqLength()-1), 
+									thrust::constant_iterator<bool>(timestep >= this->curMinSeqLength()))),
                         m_bw.tmpOutputs.begin() + n*timestep,
                         fn
                         );
@@ -936,16 +952,24 @@ namespace layers {
             for (int timestep = this->curMaxSeqLength()-1; timestep >= 0; --timestep) {
                 // collect errors from previous timestep
                 if (timestep != this->curMaxSeqLength()-1) {
-                    m_fw.timestepMatrices[timestep].tmpOutputErrors.addProduct(m_fw.weightMatrices.niInternal, false, m_fw.timestepMatrices[timestep+1].niDeltas, false);
-                    m_fw.timestepMatrices[timestep].tmpOutputErrors.addProduct(m_fw.weightMatrices.igInternal, false, m_fw.timestepMatrices[timestep+1].igDeltas, false);
-                    m_fw.timestepMatrices[timestep].tmpOutputErrors.addProduct(m_fw.weightMatrices.fgInternal, false, m_fw.timestepMatrices[timestep+1].fgDeltas, false);
-                    m_fw.timestepMatrices[timestep].tmpOutputErrors.addProduct(m_fw.weightMatrices.ogInternal, false, m_fw.timestepMatrices[timestep+1].ogDeltas, false);
+                    m_fw.timestepMatrices[timestep].tmpOutputErrors.addProduct(m_fw.weightMatrices.niInternal, false, 
+									m_fw.timestepMatrices[timestep+1].niDeltas, false);
+                    m_fw.timestepMatrices[timestep].tmpOutputErrors.addProduct(m_fw.weightMatrices.igInternal, false, 
+									m_fw.timestepMatrices[timestep+1].igDeltas, false);
+                    m_fw.timestepMatrices[timestep].tmpOutputErrors.addProduct(m_fw.weightMatrices.fgInternal, false, 
+									m_fw.timestepMatrices[timestep+1].fgDeltas, false);
+                    m_fw.timestepMatrices[timestep].tmpOutputErrors.addProduct(m_fw.weightMatrices.ogInternal, false, 
+									m_fw.timestepMatrices[timestep+1].ogDeltas, false);
                 }
 
                 // compute errors
                 thrust::for_each(
-                    thrust::make_zip_iterator(thrust::make_tuple(m_fw.tmpOutputErrors.begin() + n*timestep,   thrust::counting_iterator<int>(n*timestep),   thrust::constant_iterator<bool>(timestep == this->curMaxSeqLength()-1),   thrust::constant_iterator<bool>(!timestep),   thrust::constant_iterator<bool>(timestep >= this->curMinSeqLength()))),
-                    thrust::make_zip_iterator(thrust::make_tuple(m_fw.tmpOutputErrors.begin() + n*timestep+n, thrust::counting_iterator<int>(n*timestep)+n, thrust::constant_iterator<bool>(timestep == this->curMaxSeqLength()-1)+n, thrust::constant_iterator<bool>(!timestep)+n, thrust::constant_iterator<bool>(timestep >= this->curMinSeqLength())+n)),
+                    thrust::make_zip_iterator(thrust::make_tuple(m_fw.tmpOutputErrors.begin() + n*timestep,   
+				thrust::counting_iterator<int>(n*timestep),   thrust::constant_iterator<bool>(timestep == this->curMaxSeqLength()-1),   
+				thrust::constant_iterator<bool>(!timestep),   thrust::constant_iterator<bool>(timestep >= this->curMinSeqLength()))),
+                    thrust::make_zip_iterator(thrust::make_tuple(m_fw.tmpOutputErrors.begin() + n*timestep+n, 
+				thrust::counting_iterator<int>(n*timestep)+n, thrust::constant_iterator<bool>(timestep == this->curMaxSeqLength()-1)+n, 
+				thrust::constant_iterator<bool>(!timestep)+n, thrust::constant_iterator<bool>(timestep >= this->curMinSeqLength())+n)),
                     fn
                     );
             }
@@ -970,16 +994,26 @@ namespace layers {
                 for (int timestep = 0; timestep < this->curMaxSeqLength(); ++timestep) {
                     // collect errors from previous timestep
                     if (timestep != 0) {
-                        m_bw.timestepMatrices[timestep].tmpOutputErrors.addProduct(m_bw.weightMatrices.niInternal, false, m_bw.timestepMatrices[timestep-1].niDeltas, false);
-                        m_bw.timestepMatrices[timestep].tmpOutputErrors.addProduct(m_bw.weightMatrices.igInternal, false, m_bw.timestepMatrices[timestep-1].igDeltas, false);
-                        m_bw.timestepMatrices[timestep].tmpOutputErrors.addProduct(m_bw.weightMatrices.fgInternal, false, m_bw.timestepMatrices[timestep-1].fgDeltas, false);
-                        m_bw.timestepMatrices[timestep].tmpOutputErrors.addProduct(m_bw.weightMatrices.ogInternal, false, m_bw.timestepMatrices[timestep-1].ogDeltas, false);
+                        m_bw.timestepMatrices[timestep].tmpOutputErrors.addProduct(m_bw.weightMatrices.niInternal, false, 
+										m_bw.timestepMatrices[timestep-1].niDeltas, false);
+                        m_bw.timestepMatrices[timestep].tmpOutputErrors.addProduct(m_bw.weightMatrices.igInternal, false, 
+										m_bw.timestepMatrices[timestep-1].igDeltas, false);
+                        m_bw.timestepMatrices[timestep].tmpOutputErrors.addProduct(m_bw.weightMatrices.fgInternal, false, 
+										m_bw.timestepMatrices[timestep-1].fgDeltas, false);
+                        m_bw.timestepMatrices[timestep].tmpOutputErrors.addProduct(m_bw.weightMatrices.ogInternal, false, 
+										m_bw.timestepMatrices[timestep-1].ogDeltas, false);
                     }
 
                     // compute errors
                     thrust::for_each(
-                        thrust::make_zip_iterator(thrust::make_tuple(m_bw.tmpOutputErrors.begin() + n*timestep,   thrust::counting_iterator<int>(n*timestep),   thrust::constant_iterator<bool>(!timestep),   thrust::constant_iterator<bool>(timestep == this->curMaxSeqLength()-1),   thrust::constant_iterator<bool>(timestep >= this->curMinSeqLength()))),
-                        thrust::make_zip_iterator(thrust::make_tuple(m_bw.tmpOutputErrors.begin() + n*timestep+n, thrust::counting_iterator<int>(n*timestep)+n, thrust::constant_iterator<bool>(!timestep)+n, thrust::constant_iterator<bool>(timestep == this->curMaxSeqLength()-1)+n, thrust::constant_iterator<bool>(timestep >= this->curMinSeqLength())+n)),
+                        thrust::make_zip_iterator(thrust::make_tuple(m_bw.tmpOutputErrors.begin() + n*timestep,   
+				thrust::counting_iterator<int>(n*timestep),   thrust::constant_iterator<bool>(!timestep),   
+				thrust::constant_iterator<bool>(timestep == this->curMaxSeqLength()-1),   
+				thrust::constant_iterator<bool>(timestep >= this->curMinSeqLength()))),
+                        thrust::make_zip_iterator(thrust::make_tuple(m_bw.tmpOutputErrors.begin() + n*timestep+n, 
+				thrust::counting_iterator<int>(n*timestep)+n, thrust::constant_iterator<bool>(!timestep)+n, 
+				thrust::constant_iterator<bool>(timestep == this->curMaxSeqLength()-1)+n, 
+				thrust::constant_iterator<bool>(timestep >= this->curMinSeqLength())+n)),
                         fn
                         );
                 }
@@ -990,7 +1024,8 @@ namespace layers {
         {{
             TrainableLayer<TDevice> *pl = dynamic_cast<TrainableLayer<TDevice>*>(&this->precedingLayer());
             if (pl) {
-                helpers::Matrix<TDevice> plErrorsMatrix(&pl->outputErrors(), pl->size(), this->curMaxSeqLength() * this->parallelSequences());
+                helpers::Matrix<TDevice> plErrorsMatrix(&pl->outputErrors(), pl->size(), 
+					this->curMaxSeqLength() * this->parallelSequences());
 
                 // forward states
                 plErrorsMatrix.assignProduct(m_fw.weightMatrices.niInput, false, m_fw.niDeltasMatrix, false);

@@ -145,9 +145,12 @@ namespace layers {
     {
         // collect outputs from preceding layer
         {{
-            helpers::Matrix<TDevice> weightsMatrix  (&this->weights(),                  this->precedingLayer().size(), this->size());
-            helpers::Matrix<TDevice> plOutputsMatrix(&this->precedingLayer().outputs(), this->precedingLayer().size(), this->curMaxSeqLength() * this->parallelSequences());
-            helpers::Matrix<TDevice> outputsMatrix  (&this->_outputs(),                 this->size(),                  this->curMaxSeqLength() * this->parallelSequences());
+            helpers::Matrix<TDevice> weightsMatrix  (&this->weights(),                  this->precedingLayer().size(), 
+															this->size());
+            helpers::Matrix<TDevice> plOutputsMatrix(&this->precedingLayer().outputs(), this->precedingLayer().size(), 
+										this->curMaxSeqLength() * this->parallelSequences());
+            helpers::Matrix<TDevice> outputsMatrix  (&this->_outputs(),                 this->size(),                  
+										this->curMaxSeqLength() * this->parallelSequences());
 
             outputsMatrix.assignProduct(weightsMatrix, true, plOutputsMatrix, false);
         }}
@@ -190,8 +193,10 @@ namespace layers {
             TrainableLayer<TDevice> *pl = dynamic_cast<TrainableLayer<TDevice>*>(&this->precedingLayer());
             if (pl) {
                 helpers::Matrix<TDevice> weightsMatrix (&this->weights(),      pl->size(),   this->size());
-                helpers::Matrix<TDevice> plErrorsMatrix(&pl->outputErrors(),   pl->size(),   this->curMaxSeqLength() * this->parallelSequences());
-                helpers::Matrix<TDevice> deltasMatrix  (&this->outputErrors(), this->size(), this->curMaxSeqLength() * this->parallelSequences());
+                helpers::Matrix<TDevice> plErrorsMatrix(&pl->outputErrors(),   pl->size(),   
+								this->curMaxSeqLength() * this->parallelSequences());
+                helpers::Matrix<TDevice> deltasMatrix  (&this->outputErrors(), this->size(), 
+								this->curMaxSeqLength() * this->parallelSequences());
 
                 plErrorsMatrix.assignProduct(weightsMatrix, false, deltasMatrix, false);
             }
@@ -199,9 +204,12 @@ namespace layers {
 
         // compute the input weight updates
         {{
-            helpers::Matrix<TDevice> weightUpdatesMatrix(&this->_weightUpdates(),           this->precedingLayer().size(), this->size());
-            helpers::Matrix<TDevice> plOutputsMatrix    (&this->precedingLayer().outputs(), this->precedingLayer().size(), this->curMaxSeqLength() * this->parallelSequences());
-            helpers::Matrix<TDevice> deltasMatrix       (&this->outputErrors(),             this->size(),                  this->curMaxSeqLength() * this->parallelSequences());
+            helpers::Matrix<TDevice> weightUpdatesMatrix(&this->_weightUpdates(),           this->precedingLayer().size(), 
+																this->size());
+            helpers::Matrix<TDevice> plOutputsMatrix    (&this->precedingLayer().outputs(), this->precedingLayer().size(), 
+											this->curMaxSeqLength() * this->parallelSequences());
+            helpers::Matrix<TDevice> deltasMatrix       (&this->outputErrors(),             this->size(),                  
+											this->curMaxSeqLength() * this->parallelSequences());
 
             weightUpdatesMatrix.assignProduct(plOutputsMatrix, false, deltasMatrix, true);
         }}
