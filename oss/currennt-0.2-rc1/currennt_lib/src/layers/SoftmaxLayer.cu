@@ -342,8 +342,10 @@ namespace layers {
             int n = this->curMaxSeqLength() * this->parallelSequences() * this->size();
 
             thrust::for_each(
-                thrust::make_zip_iterator(thrust::make_tuple(this->outputErrors().begin(),   this->_outputs().begin(),   thrust::counting_iterator<int>(0))),
-                thrust::make_zip_iterator(thrust::make_tuple(this->outputErrors().begin()+n, this->_outputs().begin()+n, thrust::counting_iterator<int>(0)+n)),
+                thrust::make_zip_iterator(thrust::make_tuple(this->outputErrors().begin(),   
+				this->_outputs().begin(),   thrust::counting_iterator<int>(0))),
+                thrust::make_zip_iterator(thrust::make_tuple(this->outputErrors().begin()+n, 
+				this->_outputs().begin()+n, thrust::counting_iterator<int>(0)+n)),
                 fn
                 );
         }}
