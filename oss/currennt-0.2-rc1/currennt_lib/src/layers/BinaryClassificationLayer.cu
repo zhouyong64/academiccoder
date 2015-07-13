@@ -117,7 +117,8 @@ namespace {
 namespace layers {
 
     template <typename TDevice>
-    BinaryClassificationLayer<TDevice>::BinaryClassificationLayer(const helpers::JsonValue &layerChild, Layer<TDevice> &precedingLayer)
+    BinaryClassificationLayer<TDevice>::BinaryClassificationLayer(const helpers::JsonValue &layerChild, 
+											Layer<TDevice> &precedingLayer)
         : PostOutputLayer<TDevice>(layerChild, precedingLayer, precedingLayer.size())
     {
         if (this->size() != 1)
@@ -137,8 +138,10 @@ namespace layers {
         int n = this->curMaxSeqLength() * this->parallelSequences();
 
         int correctClassifications = thrust::transform_reduce(
-            thrust::make_zip_iterator(thrust::make_tuple(this->_targets().begin(),   this->_actualOutputs().begin(),   this->patTypes().begin())),
-            thrust::make_zip_iterator(thrust::make_tuple(this->_targets().begin()+n, this->_actualOutputs().begin()+n, this->patTypes().begin()+n)),
+            thrust::make_zip_iterator(thrust::make_tuple(this->_targets().begin(),   this->_actualOutputs().begin(),   
+													this->patTypes().begin())),
+            thrust::make_zip_iterator(thrust::make_tuple(this->_targets().begin()+n, this->_actualOutputs().begin()+n, 
+													this->patTypes().begin()+n)),
             fn,
             0,
             thrust::plus<int>()
@@ -159,7 +162,8 @@ namespace layers {
     {
         PostOutputLayer<TDevice>::loadSequences(fraction);
 
-        // In this case, we can copy the integer vector of target classes, since they are equal to the real target values (0/1)
+        // In this case, we can copy the integer vector of target classes, since they are equal 
+	 //to the real target values (0/1)
         thrust::copy(fraction.targetClasses().begin(), fraction.targetClasses().end(), this->_targets().begin());
     }
 
@@ -172,8 +176,10 @@ namespace layers {
         int n = this->curMaxSeqLength() * this->parallelSequences();
 
         real_t error = thrust::transform_reduce(
-            thrust::make_zip_iterator(thrust::make_tuple(this->_targets().begin(),   this->_actualOutputs().begin(),   thrust::counting_iterator<int>(0))),
-            thrust::make_zip_iterator(thrust::make_tuple(this->_targets().begin()+n, this->_actualOutputs().begin()+n, thrust::counting_iterator<int>(0)+n)),
+            thrust::make_zip_iterator(thrust::make_tuple(this->_targets().begin(),   this->_actualOutputs().begin(),
+											   thrust::counting_iterator<int>(0))),
+            thrust::make_zip_iterator(thrust::make_tuple(this->_targets().begin()+n, this->_actualOutputs().begin()+n, 
+											   thrust::counting_iterator<int>(0)+n)),
             fn,
             (real_t)0,
             thrust::plus<real_t>()
@@ -196,8 +202,10 @@ namespace layers {
         int n = this->curMaxSeqLength() * this->parallelSequences();
 
         thrust::for_each(
-            thrust::make_zip_iterator(thrust::make_tuple(this->_outputErrors().begin(),   this->_targets().begin(),   this->_actualOutputs().begin(),   thrust::counting_iterator<int>(0))),
-            thrust::make_zip_iterator(thrust::make_tuple(this->_outputErrors().begin()+n, this->_targets().begin()+n, this->_actualOutputs().begin()+n, thrust::counting_iterator<int>(0)+n)),
+            thrust::make_zip_iterator(thrust::make_tuple(this->_outputErrors().begin(),   this->_targets().begin(),   
+						this->_actualOutputs().begin(),   thrust::counting_iterator<int>(0))),
+            thrust::make_zip_iterator(thrust::make_tuple(this->_outputErrors().begin()+n, this->_targets().begin()+n, 
+						this->_actualOutputs().begin()+n, thrust::counting_iterator<int>(0)+n)),
             fn
             );
 
