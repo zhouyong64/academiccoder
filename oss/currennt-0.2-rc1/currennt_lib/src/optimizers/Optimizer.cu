@@ -50,16 +50,19 @@ namespace optimizers {
             error += m_neuralNetwork.calculateError();
 
             if (dynamic_cast<layers::BinaryClassificationLayer<TDevice>*>(&m_neuralNetwork.postOutputLayer()))
-                *classError -= (real_t)static_cast<layers::BinaryClassificationLayer<TDevice>&>(m_neuralNetwork.postOutputLayer()).countCorrectClassifications();
+*classError-=(real_t)static_cast<layers::BinaryClassificationLayer<TDevice>&>(m_neuralNetwork.postOutputLayer()).
+												countCorrectClassifications();
             if (dynamic_cast<layers::MulticlassClassificationLayer<TDevice>*>(&m_neuralNetwork.postOutputLayer()))
-                *classError -= (real_t)static_cast<layers::MulticlassClassificationLayer<TDevice>&>(m_neuralNetwork.postOutputLayer()).countCorrectClassifications();
+*classError -= (real_t)static_cast<layers::MulticlassClassificationLayer<TDevice>&>(m_neuralNetwork.postOutputLayer()).
+												countCorrectClassifications();
             
             if (calcWeightUpdates) {
                 // weight noise:
                 std::vector<Cpu::real_vector> origWeights(m_neuralNetwork.layers().size());
                 if (Configuration::instance().weightNoiseSigma() > 0) {
                     for (size_t i = 1; i < m_neuralNetwork.layers().size()-1; ++i) {
-                        layers::TrainableLayer<TDevice> *layer = dynamic_cast<layers::TrainableLayer<TDevice>*>(m_neuralNetwork.layers()[i].get());
+                        layers::TrainableLayer<TDevice> *layer = 
+					dynamic_cast<layers::TrainableLayer<TDevice>*>(m_neuralNetwork.layers()[i].get());
                         if (layer) {
                             origWeights[i] = layer->weights();
                             layer->injectWeightNoise(Configuration::instance().weightNoiseSigma());
@@ -70,12 +73,14 @@ namespace optimizers {
                 m_neuralNetwork.computeBackwardPass();
 
                 for (size_t i = 1; i < m_neuralNetwork.layers().size()-1; ++i) {
-                    layers::TrainableLayer<TDevice> *layer = dynamic_cast<layers::TrainableLayer<TDevice>*>(m_neuralNetwork.layers()[i].get());
+                    layers::TrainableLayer<TDevice> *layer = 
+				dynamic_cast<layers::TrainableLayer<TDevice>*>(m_neuralNetwork.layers()[i].get());
                     if (!layer)
                         continue;
 
                     if (!firstFraction && !Configuration::instance().hybridOnlineBatch())
-                        thrust::transform(layer->weightUpdates().begin(), layer->weightUpdates().end(), m_curWeightUpdates[i].begin(), m_curWeightUpdates[i].begin(), thrust::plus<real_t>());
+                        thrust::transform(layer->weightUpdates().begin(), layer->weightUpdates().end(), 
+				m_curWeightUpdates[i].begin(), m_curWeightUpdates[i].begin(), thrust::plus<real_t>());
                     else
                     	thrust::copy(layer->weightUpdates().begin(), layer->weightUpdates().end(), m_curWeightUpdates[i].begin());
 
@@ -104,7 +109,8 @@ namespace optimizers {
     }
 
     template <typename TDevice>
-    void Optimizer<TDevice>::_exportWeights(const helpers::JsonDocument &jsonDoc, const char *arrayName, const std::vector<real_vector> &weights)
+    void Optimizer<TDevice>::_exportWeights(const helpers::JsonDocument &jsonDoc, const char *arrayName, 
+									const std::vector<real_vector> &weights)
     {
         rapidjson::Value weightsArray(rapidjson::kArrayType);
         weightsArray.Reserve((rapidjson::SizeType)weights.size(), jsonDoc->GetAllocator());
@@ -122,7 +128,8 @@ namespace optimizers {
     }
 
     template <typename TDevice>
-    void Optimizer<TDevice>::_importWeights(const helpers::JsonDocument &jsonDoc, const char *arrayName, std::vector<real_vector> *weights)
+    void Optimizer<TDevice>::_importWeights(const helpers::JsonDocument &jsonDoc, const char *arrayName, 
+										std::vector<real_vector> *weights)
     {
         if (!jsonDoc->HasMember(arrayName) || !(*jsonDoc)[arrayName].IsArray())
             throw std::runtime_error(std::string("Array '") + arrayName + "' is missing or has the wrong type");
@@ -131,7 +138,8 @@ namespace optimizers {
             throw std::runtime_error(std::string("Array '") + arrayName + "' has a wrong size");
 
         int i = 0;
-        for (rapidjson::Value::ConstValueIterator it = (*jsonDoc)[arrayName].Begin(); it != (*jsonDoc)[arrayName].End(); ++it) {
+        for (rapidjson::Value::ConstValueIterator it = (*jsonDoc)[arrayName].Begin(); 
+							it != (*jsonDoc)[arrayName].End(); ++it) {
             if (!it->IsArray())
                 throw std::runtime_error(std::string("Object in '") + arrayName + "' is not an array");
             if (it->Size() != (rapidjson::SizeType)(*weights)[i].size())
@@ -152,7 +160,8 @@ namespace optimizers {
     void Optimizer<TDevice>::_storeWeights()
     {
         for (size_t i = 1; i < m_neuralNetwork.layers().size() - 1; ++i) {
-            layers::TrainableLayer<TDevice> *layer = dynamic_cast<layers::TrainableLayer<TDevice>*>(m_neuralNetwork.layers()[i].get());
+            layers::TrainableLayer<TDevice> *layer = 
+			dynamic_cast<layers::TrainableLayer<TDevice>*>(m_neuralNetwork.layers()[i].get());
             if (layer) 
             	thrust::copy(layer->weights().begin(), layer->weights().end(), m_bestWeights[i].begin());
         }
@@ -162,7 +171,8 @@ namespace optimizers {
     void Optimizer<TDevice>::_restoreWeights()
     {
         for (size_t i = 1; i < m_neuralNetwork.layers().size() - 1; ++i) {
-        	layers::TrainableLayer<TDevice> *layer = dynamic_cast<layers::TrainableLayer<TDevice>*>(m_neuralNetwork.layers()[i].get());
+        	layers::TrainableLayer<TDevice> *layer = 
+			dynamic_cast<layers::TrainableLayer<TDevice>*>(m_neuralNetwork.layers()[i].get());
             if (layer)
             	thrust::copy(m_bestWeights[i].begin(), m_bestWeights[i].end(), layer->weights().begin());
         }
@@ -206,7 +216,8 @@ namespace optimizers {
         // initialize the best weights vectors
         m_bestWeights.resize(m_neuralNetwork.layers().size());
         for (size_t i = 1; i < m_neuralNetwork.layers().size()-1; ++i) {
-        	layers::TrainableLayer<TDevice> *layer = dynamic_cast<layers::TrainableLayer<TDevice>*>(m_neuralNetwork.layers()[i].get());
+        	layers::TrainableLayer<TDevice> *layer = 
+			dynamic_cast<layers::TrainableLayer<TDevice>*>(m_neuralNetwork.layers()[i].get());
             if (layer)
                 m_bestWeights[i] = layer->weights();
         }
