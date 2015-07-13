@@ -247,8 +247,8 @@ namespace {
 
             // calculate the cell state error
             real_t ogPeepWeight = ogPeepWeights[blockIdx];
-            real_t cellStateErr = ogAct * cell_output_act_fn_t::deriv(cell_output_act_fn_t::fn(cellState)) * outputErr + 
-														ogPeepWeight * ogDelta;
+            real_t cellStateErr = ogAct * cell_output_act_fn_t::deriv(cell_output_act_fn_t::fn(cellState)) * 
+								               outputErr + ogPeepWeight * ogDelta;
 
             if (!firstCall) {
                 real_t nextFgAct        = fgActs         [outputIdx - prevOutputDistance];
@@ -965,11 +965,15 @@ namespace layers {
                 // compute errors
                 thrust::for_each(
                     thrust::make_zip_iterator(thrust::make_tuple(m_fw.tmpOutputErrors.begin() + n*timestep,   
-				thrust::counting_iterator<int>(n*timestep),   thrust::constant_iterator<bool>(timestep == this->curMaxSeqLength()-1),   
-				thrust::constant_iterator<bool>(!timestep),   thrust::constant_iterator<bool>(timestep >= this->curMinSeqLength()))),
+				thrust::counting_iterator<int>(n*timestep),   
+				thrust::constant_iterator<bool>(timestep == this->curMaxSeqLength()-1),   
+				thrust::constant_iterator<bool>(!timestep),   
+				thrust::constant_iterator<bool>(timestep >= this->curMinSeqLength()))),
                     thrust::make_zip_iterator(thrust::make_tuple(m_fw.tmpOutputErrors.begin() + n*timestep+n, 
-				thrust::counting_iterator<int>(n*timestep)+n, thrust::constant_iterator<bool>(timestep == this->curMaxSeqLength()-1)+n, 
-				thrust::constant_iterator<bool>(!timestep)+n, thrust::constant_iterator<bool>(timestep >= this->curMinSeqLength())+n)),
+				thrust::counting_iterator<int>(n*timestep)+n, 
+				thrust::constant_iterator<bool>(timestep == this->curMaxSeqLength()-1)+n, 
+				thrust::constant_iterator<bool>(!timestep)+n, 
+				thrust::constant_iterator<bool>(timestep >= this->curMinSeqLength())+n)),
                     fn
                     );
             }
