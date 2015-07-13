@@ -86,7 +86,8 @@ NeuralNetwork<TDevice>::NeuralNetwork(const helpers::JsonDocument &jsonDoc, int 
 layer = LayerFactory<TDevice>::createLayer(layerType, &*layerChild, weightsSection, parallelSequences, maxSeqLength);
 		  }
                 else{
-layer = LayerFactory<TDevice>::createLayer(layerType, &*layerChild, weightsSection, parallelSequences, maxSeqLength, m_layers.back().get());
+layer = LayerFactory<TDevice>::createLayer(layerType, &*layerChild, weightsSection, parallelSequences, 
+                               maxSeqLength, m_layers.back().get());
 }
 
                 m_layers.push_back(boost::shared_ptr<layers::Layer<TDevice> >(layer));
