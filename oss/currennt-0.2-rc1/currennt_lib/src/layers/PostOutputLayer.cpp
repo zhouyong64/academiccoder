@@ -56,7 +56,8 @@ namespace layers {
         , m_precedingLayer(precedingLayer)
     {
         if (this->size() != requiredSize)
-            throw std::runtime_error("Size mismatch: " + boost::lexical_cast<std::string>(this->size()) + " vs. " + boost::lexical_cast<std::string>(requiredSize));
+            throw std::runtime_error("Size mismatch: " + boost::lexical_cast<std::string>(this->size()) + " vs. " + 
+									boost::lexical_cast<std::string>(requiredSize));
     }
 
     template <typename TDevice>
