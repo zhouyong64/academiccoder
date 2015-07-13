@@ -870,10 +870,11 @@ namespace layers {
 
                     // compute outputs
                     thrust::transform(
-                        thrust::counting_iterator<int>(n*timestep),
-                        thrust::counting_iterator<int>(n*timestep) + n,
-                        thrust::make_zip_iterator(thrust::make_tuple(thrust::constant_iterator<bool>(timestep == this->curMaxSeqLength()-1), 
-									thrust::constant_iterator<bool>(timestep >= this->curMinSeqLength()))),
+                      thrust::counting_iterator<int>(n*timestep),
+                      thrust::counting_iterator<int>(n*timestep) + n,
+                      thrust::make_zip_iterator(thrust::make_tuple(thrust::constant_iterator<bool>(timestep == 
+							this->curMaxSeqLength()-1), 
+						       thrust::constant_iterator<bool>(timestep >= this->curMinSeqLength()))),
                         m_bw.tmpOutputs.begin() + n*timestep,
                         fn
                         );
