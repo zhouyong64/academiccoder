@@ -82,10 +82,12 @@ NeuralNetwork<TDevice>::NeuralNetwork(const helpers::JsonDocument &jsonDoc, int 
             try {
             	layers::Layer<TDevice> *layer;
 
-                if (m_layers.empty())
-                	layer = LayerFactory<TDevice>::createLayer(layerType, &*layerChild, weightsSection, parallelSequences, maxSeqLength);
-                else
-                    layer = LayerFactory<TDevice>::createLayer(layerType, &*layerChild, weightsSection, parallelSequences, maxSeqLength, m_layers.back().get());
+                if (m_layers.empty()){
+layer = LayerFactory<TDevice>::createLayer(layerType, &*layerChild, weightsSection, parallelSequences, maxSeqLength);
+		  }
+                else{
+layer = LayerFactory<TDevice>::createLayer(layerType, &*layerChild, weightsSection, parallelSequences, maxSeqLength, m_layers.back().get());
+}
 
                 m_layers.push_back(boost::shared_ptr<layers::Layer<TDevice> >(layer));
             }
