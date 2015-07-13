@@ -49,13 +49,14 @@ namespace layers {
 
     template <typename TDevice>
     TrainableLayer<TDevice>::TrainableLayer(const helpers::JsonValue &layerChild, const helpers::JsonValue &weightsSection, 
-                                            int inputWeightsPerBlock, int internalWeightsPerBlock, Layer<TDevice> &precedingLayer)
+                                     int inputWeightsPerBlock, int internalWeightsPerBlock, Layer<TDevice> &precedingLayer)
         : Layer<TDevice>           (layerChild, precedingLayer.parallelSequences(), precedingLayer.maxSeqLength())
         , m_precedingLayer         (precedingLayer)
         , m_inputWeightsPerBlock   (inputWeightsPerBlock)
         , m_internalWeightsPerBlock(internalWeightsPerBlock)
-        , m_bias                   (layerChild->HasMember("bias") ? static_cast<real_t>((*layerChild)["bias"].GetDouble()) : 0)
-        , m_learningRate           (layerChild->HasMember("learningRate") ? static_cast<real_t>((*layerChild)["learningRate"].GetDouble()) : -1)
+        , m_bias  (layerChild->HasMember("bias") ? static_cast<real_t>((*layerChild)["bias"].GetDouble()) : 0)
+        , m_learningRate (layerChild->HasMember("learningRate") ? 
+						static_cast<real_t>((*layerChild)["learningRate"].GetDouble()) : -1)
     {
         //std::cout << "Creating layer " << this->name() << std::endl;
         // check if the bias value exists
@@ -70,7 +71,8 @@ namespace layers {
                 throw std::runtime_error(std::string("Missing weights section for layer '") + this->name() + "'");
             const rapidjson::Value &weightsChild = (*weightsSection)[this->name().c_str()];
             if (!weightsChild.IsObject())
-                throw std::runtime_error(std::string("Weights section for layer '") + this->name() + "' is not an object");
+                throw std::runtime_error(std::string("Weights section for layer '") + this->name() + 
+										"' is not an object");
 
             if (!weightsChild.HasMember("input") || !weightsChild["input"].IsArray())
                 throw std::runtime_error(std::string("Missing array 'weights/") + this->name() + "/input'");
@@ -118,7 +120,8 @@ namespace layers {
                     weights[i] = dist(*gen) + config.weightsDistributionUniformMin();
             }
             else {
-                boost::random::normal_distribution<real_t> dist(config.weightsDistributionNormalMean(), config.weightsDistributionNormalSigma());
+                boost::random::normal_distribution<real_t> dist(config.weightsDistributionNormalMean(), 
+									config.weightsDistributionNormalSigma());
                 for (size_t i = 0; i < weights.size(); ++i)
                     weights[i] = dist(*gen);
             }
@@ -205,11 +208,13 @@ namespace layers {
         thrust::copy(weightNoise.begin(), weightNoise.end(), weightNoiseD.begin());
 
         // add weight noise to device vector of weights
-        thrust::transform(weights().begin(), weights().end(), weightNoiseD.begin(), weights().begin(), thrust::plus<real_t>());
+        thrust::transform(weights().begin(), weights().end(), weightNoiseD.begin(), weights().begin(), 
+											thrust::plus<real_t>());
     }
 
     template <typename TDevice>
-    void TrainableLayer<TDevice>::exportWeights(const helpers::JsonValue &weightsObject, const helpers::JsonAllocator &allocator) const
+    void TrainableLayer<TDevice>::exportWeights(const helpers::JsonValue &weightsObject, 
+						const helpers::JsonAllocator &allocator) const
     {
         if (!weightsObject->IsObject())
             throw std::runtime_error("The JSON value is not an object");
@@ -235,7 +240,8 @@ namespace layers {
         int internalWeightsCount = this->size() * m_internalWeightsPerBlock;
         internalWeightsArray.Reserve(internalWeightsCount, allocator);
         for (int i = 0; i < internalWeightsCount; ++i)
-            internalWeightsArray.PushBack(m_weights[inputWeightsCount + biasWeightsCount + i], allocator);
+            internalWeightsArray.PushBack(m_weights[inputWeightsCount + 
+						biasWeightsCount + i], allocator);
 
         // create and fill the weights subsection
         rapidjson::Value weightsSection(rapidjson::kObjectType);
@@ -248,7 +254,8 @@ namespace layers {
     }
 
     template <typename TDevice>
-    void TrainableLayer<TDevice>::exportLayer(const helpers::JsonValue &layersArray, const helpers::JsonAllocator &allocator) const
+    void TrainableLayer<TDevice>::exportLayer(const helpers::JsonValue &layersArray, 
+					const helpers::JsonAllocator &allocator) const
     {
         Layer<TDevice>::exportLayer(layersArray, allocator);
         (*layersArray)[layersArray->Size() - 1].AddMember("bias", m_bias, allocator);

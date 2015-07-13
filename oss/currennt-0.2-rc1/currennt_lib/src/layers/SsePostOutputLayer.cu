@@ -121,8 +121,10 @@ namespace layers {
         int n = this->curMaxSeqLength() * this->parallelSequences() * this->size();
 
         real_t mse = (real_t)0.5 * thrust::transform_reduce(
-            thrust::make_zip_iterator(thrust::make_tuple(this->_targets().begin(),   this->_actualOutputs().begin(),   thrust::counting_iterator<int>(0))),
-            thrust::make_zip_iterator(thrust::make_tuple(this->_targets().begin()+n, this->_actualOutputs().begin()+n, thrust::counting_iterator<int>(0)+n)),
+            thrust::make_zip_iterator(thrust::make_tuple(this->_targets().begin(),   
+			this->_actualOutputs().begin(),   thrust::counting_iterator<int>(0))),
+            thrust::make_zip_iterator(thrust::make_tuple(this->_targets().begin()+n, 
+			this->_actualOutputs().begin()+n, thrust::counting_iterator<int>(0)+n)),
             fn,
             (real_t)0,
             thrust::plus<real_t>()
@@ -147,8 +149,10 @@ namespace layers {
         int n = this->curMaxSeqLength() * this->parallelSequences() * this->size();
 
         thrust::transform(
-            thrust::make_zip_iterator(thrust::make_tuple(this->_actualOutputs().begin(),   this->_targets().begin(),   thrust::counting_iterator<int>(0))),
-            thrust::make_zip_iterator(thrust::make_tuple(this->_actualOutputs().begin()+n, this->_targets().begin()+n, thrust::counting_iterator<int>(0)+n)),
+            thrust::make_zip_iterator(thrust::make_tuple(this->_actualOutputs().begin(),   
+				this->_targets().begin(),   thrust::counting_iterator<int>(0))),
+            thrust::make_zip_iterator(thrust::make_tuple(this->_actualOutputs().begin()+n, 
+				this->_targets().begin()+n, thrust::counting_iterator<int>(0)+n)),
             this->_outputErrors().begin(),
             fn
             );
