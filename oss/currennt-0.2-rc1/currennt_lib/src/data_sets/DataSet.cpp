@@ -356,7 +356,8 @@ namespace data_sets {
                     // duplicate last time step if needed
                     else if (srcStart > m_inputPatternSize * (seq.length - 1))
                         srcStart = m_inputPatternSize * (seq.length - 1);
-                    int tgtStart = frac->m_inputPatternSize * (timestep * m_parallelSequences + i) + offset_out * m_inputPatternSize;
+                    int tgtStart = frac->m_inputPatternSize * (timestep * m_parallelSequences + i) + 
+										offset_out * m_inputPatternSize;
                     //std::cout << "copy from " << srcStart << " to " << tgtStart << " size " << m_inputPatternSize << std::endl;
                     thrust::copy_n(inputs.begin() + srcStart, m_inputPatternSize, frac->m_inputs.begin() + tgtStart);
                     ++offset_out;
@@ -440,7 +441,8 @@ namespace data_sets {
     {
     }
 
-    DataSet::DataSet(const std::vector<std::string> &ncfiles, int parSeq, real_t fraction, int truncSeqLength, bool fracShuf, bool seqShuf, real_t noiseDev, std::string cachePath)
+    DataSet::DataSet(const std::vector<std::string> &ncfiles, int parSeq, real_t fraction, int truncSeqLength, 
+				bool fracShuf, bool seqShuf, real_t noiseDev, std::string cachePath)
         : m_fractionShuffling(fracShuf)
         , m_sequenceShuffling(seqShuf)
         , m_noiseDeviation   (noiseDev)
@@ -548,7 +550,8 @@ namespace data_sets {
 
                     // read input patterns and store them in the cache file
                     seq->inputsBegin = m_cacheFile.tellp();
-                    Cpu::real_vector inputs = internal::readNcPatternArray(ncid, "inputs", inputsBegin, seq->length, m_inputPatternSize);
+                    Cpu::real_vector inputs = internal::readNcPatternArray(ncid, "inputs", inputsBegin, 
+										seq->length, m_inputPatternSize);
                     m_cacheFile.write((const char*)inputs.data(), sizeof(real_t) * inputs.size());
                     assert (m_cacheFile.tellp() - seq->inputsBegin == seq->length * m_inputPatternSize * sizeof(real_t));
 
@@ -560,7 +563,8 @@ namespace data_sets {
                         assert (m_cacheFile.tellp() - seq->targetsBegin == seq->length * sizeof(int));
                     }
                     else {
-                        Cpu::real_vector targets = internal::readNcPatternArray(ncid, "targetPatterns", targetsBegin, seq->length, m_outputPatternSize);
+                        Cpu::real_vector targets = internal::readNcPatternArray(ncid, "targetPatterns", targetsBegin, 
+												seq->length, m_outputPatternSize);
                         m_cacheFile.write((const char*)targets.data(), sizeof(real_t) * targets.size());
                         assert (m_cacheFile.tellp() - seq->targetsBegin == seq->length * m_outputPatternSize * sizeof(real_t));
                     }
