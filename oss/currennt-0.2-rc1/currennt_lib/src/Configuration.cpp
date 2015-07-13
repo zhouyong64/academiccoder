@@ -253,13 +253,17 @@ Configuration::Configuration(int argc, const char *argv[])
     m_serializedOptions = internal::serializeOptions(vm);
 
     // split the training file options
-    boost::algorithm::split(m_trainingFiles, trainingFileList, boost::algorithm::is_any_of(";,"), boost::algorithm::token_compress_on);
+    boost::algorithm::split(m_trainingFiles, trainingFileList, boost::algorithm::is_any_of(";,"), 
+                                               boost::algorithm::token_compress_on);
     if (!validationFileList.empty())
-        boost::algorithm::split(m_validationFiles, validationFileList, boost::algorithm::is_any_of(";,"), boost::algorithm::token_compress_on);
+        boost::algorithm::split(m_validationFiles, validationFileList, boost::algorithm::is_any_of(";,"), 
+                                               boost::algorithm::token_compress_on);
     if (!testFileList.empty())
-        boost::algorithm::split(m_testFiles, testFileList, boost::algorithm::is_any_of(";,"), boost::algorithm::token_compress_on);
+        boost::algorithm::split(m_testFiles, testFileList, boost::algorithm::is_any_of(";,"), 
+							boost::algorithm::token_compress_on);
     if (!feedForwardInputFileList.empty())
-        boost::algorithm::split(m_feedForwardInputFiles, feedForwardInputFileList, boost::algorithm::is_any_of(";,"), boost::algorithm::token_compress_on);
+        boost::algorithm::split(m_feedForwardInputFiles, feedForwardInputFileList, 
+			boost::algorithm::is_any_of(";,"), boost::algorithm::token_compress_on);
 
     // check the optimizer string
     if (optimizerString == "rprop")
