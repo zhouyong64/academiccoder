@@ -49,11 +49,13 @@ struct WeightContainer: public DataExporter
 		static WeightContainer wc;
 		return wc;
 	}
-	void link_layers(const string& fromName, const string& toName, const string& connName = "", int paramBegin = 0, int paramEnd = 0)
+	void link_layers(const string& fromName, const string& toName, const string& connName = "",
+			int paramBegin = 0, int paramEnd = 0)
 	{
 		connections.insert(make_pair(toName, make_tuple(fromName, connName, paramBegin, paramEnd)));
 	}
-	pair<size_t, size_t> new_parameters(size_t numParams, const string& fromName, const string& toName, const string& connName)
+	pair<size_t, size_t> new_parameters(size_t numParams, const string& fromName,
+			const string& toName, const string& connName)
 	{
 		size_t begin = weights.size();
 		weights.resize(weights.size() + numParams);

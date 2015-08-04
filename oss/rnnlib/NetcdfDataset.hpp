@@ -87,7 +87,8 @@ static string get_nc_string(const NcFile& ncf, const string& name, int offset = 
 	}
 	return "";
 }
-template<class T> static bool load_nc_array(const NcFile& ncf, const string& name, vector<T>& dest, bool required = true, int offset = 0, int count = -1)
+template<class T> static bool load_nc_array(const NcFile& ncf, const string& name, vector<T>& dest,
+		bool required = true, int offset = 0, int count = -1)
 {
 	NcVar *v = load_nc_variable(ncf, name.c_str(), required);
 	if (v)
@@ -107,13 +108,15 @@ template<class T> static bool load_nc_array(const NcFile& ncf, const string& nam
 		if (!success)
 		{
 			dest.resize(0);
-			check(!required, string("NetcdfDataset::load_nc_array<") + typeid(T).name() + "> " + name + '\n' + "failed with offset " + str(offsets) + ", counts " + str(counts));
+			check(!required, string("NetcdfDataset::load_nc_array<") + typeid(T).name() + "> " +
+					name + '\n' + "failed with offset " + str(offsets) + ", counts " + str(counts));
 		}
 		return success;
 	}
 	return false;
 }
-template<class T> static vector<T> get_nc_array_step(const NcFile& ncf, const string& name, int offset = 0, bool required = true)
+template<class T> static vector<T> get_nc_array_step(const NcFile& ncf, const string& name,
+		int offset = 0, bool required = true)
 {
 	vector<T> dest;
 	load_nc_array(ncf, name, dest, required, offset, 1);
@@ -201,7 +204,8 @@ struct DataHeader
 			{
 				if (c >= 0)
 				{
-					check(in_range(inputLabels, c), "input class index " + str(c) + " not in range of input labels");
+					check(in_range(inputLabels, c), "input class index " + str(c) +
+							" not in range of input labels");
 					++inputLabelCounts[inputLabels[c]];
 				}
 			}
@@ -214,12 +218,14 @@ struct DataHeader
 			{
 				if (c >= 0)
 				{
-					check(in_range(targetLabels, c), "target class index " + str(c) + " not in range of target alphabet");
+					check(in_range(targetLabels, c), "target class index " + str(c) +
+							" not in range of target alphabet");
 					++targetLabelCounts[targetLabels[c]];
 				}
 			}
 		}
-		else if (find_nc_variable(nc, "targetStrings") && (task == "transcription" || task == "sequence_classification"))
+		else if (find_nc_variable(nc, "targetStrings") && (task == "transcription" ||
+				task == "sequence_classification"))
 		{
 			LOOP(int s, span(numSequences))
 			{
@@ -228,7 +234,8 @@ struct DataHeader
 				while(targetString >> label)
 				{
 					//check(in_right(targetLabels, label), "label \'" + label + "\' in \'" + targetString.str() + "\' not found in target alphabet");
-					if (warn_unless(in(targetLabels, label), "label \'" + label + "\' in \'" + targetString.str() + "\' not found in target alphabet"))
+					if (warn_unless(in(targetLabels, label), "label \'" + label + "\' in \'" +
+							targetString.str() + "\' not found in target alphabet"))
 					{
 						++targetLabelCounts[label];
 						++totalTargetStringLength;
@@ -377,7 +384,8 @@ struct NetcdfDataset
 		pair<int, int> offsets = get_offset(first);
 		LOOP(int i, span(first, last))
 		{
-			check(i >= 0 && i < inputSeqDims.shape[0], "sequence " + str(i) + " requested from data file " + str(filename) + " containing " + str(inputSeqDims.shape[0]) + " sequences");
+			check(i >= 0 && i < inputSeqDims.shape[0], "sequence " + str(i) + " requested from data file " +
+					str(filename) + " containing " + str(inputSeqDims.shape[0]) + " sequences");
 			DataSequence* seq = new DataSequence(header.inputSize, in(task, "regression") ? header.outputSize : 0);
 			vector<int> inputShape = flip(inputSeqDims[i]);
 			int inputCount = product(inputShape);
@@ -386,7 +394,8 @@ struct NetcdfDataset
 			load_to_seq_buffer(seq->inputs, inputShape, "inputs", true, offsets.first, inputCount);
  			if (find_variable("importance"))
  			{
- 				load_to_seq_buffer_with_depth(seq->importance, targetShape, 1, "importance", true, offsets.second, targetCount);
+ 				load_to_seq_buffer_with_depth(seq->importance, targetShape, 1, "importance", true,
+ 						offsets.second, targetCount);
  			}
 			if (in(task, "regression"))
 			{
@@ -394,15 +403,18 @@ struct NetcdfDataset
 				{
 					targetShape.clear();
 				}
-				load_to_seq_buffer(seq->targetPatterns, targetShape, "targetPatterns", true, offsets.second, targetCount);
+				load_to_seq_buffer(seq->targetPatterns, targetShape, "targetPatterns", true,
+						offsets.second, targetCount);
 			}
 			else if (task == "classification")
 			{
-				load_to_seq_buffer_with_depth(seq->targetClasses, targetShape, 1, "targetClasses", true, offsets.second, targetCount);
+				load_to_seq_buffer_with_depth(seq->targetClasses, targetShape, 1, "targetClasses",
+						true, offsets.second, targetCount);
 			}
 			else if (in(task, "discrete"))
 			{
-				load_to_seq_buffer_with_depth(seq->inputClasses, inputShape, 1, "inputClasses", true, offsets.second, inputCount);
+				load_to_seq_buffer_with_depth(seq->inputClasses, inputShape, 1, "inputClasses",
+						true, offsets.second, inputCount);
 			}
 			else if (task == "sequence_classification")
 			{
@@ -414,7 +426,8 @@ struct NetcdfDataset
 				}
 				else
 				{
-					load_to_seq_buffer_with_depth(seq->targetClasses, empty_list_of<size_t>(), 1, "targetClasses", true, offsets.second, 1);
+					load_to_seq_buffer_with_depth(seq->targetClasses, empty_list_of<size_t>(), 1,
+							"targetClasses", true, offsets.second, 1);
 				}
 			}
 			else if (in(task, "transcription"))
@@ -448,17 +461,20 @@ struct NetcdfDataset
 	{
 		return get_nc_string(nc, name, offset, required);
 	}
-	template<class T, class R> bool load_to_seq_buffer(SeqBuffer<T>& dest, const R& shape, const string& name, bool required = true, int offset = 0, int count = -1)
+	template<class T, class R> bool load_to_seq_buffer(SeqBuffer<T>& dest, const R& shape, const string& name,
+			bool required = true, int offset = 0, int count = -1)
 	{
 		dest.reshape(shape);
 		return load_array(name, dest.data, required, offset, count);
 	}
-	template<class T, class R> bool load_to_seq_buffer_with_depth(SeqBuffer<T>& dest, const R& shape, int depth, const string& name, bool required = true, int offset = 0, int count = -1)
+	template<class T, class R> bool load_to_seq_buffer_with_depth(SeqBuffer<T>& dest, const R& shape, int depth,
+			const string& name, bool required = true, int offset = 0, int count = -1)
 	{
 		dest.reshape_with_depth(shape, depth);
 		return load_array(name, dest.data, required, offset, count);
 	}
-	template<class T> bool load_array(const string& name, vector<T>& dest, bool required = true, int offset = 0, int count = -1)
+	template<class T> bool load_array(const string& name, vector<T>& dest, bool required = true,
+			int offset = 0, int count = -1)
 	{
 		return load_nc_array<T>(nc, name, dest, required, offset, count);
 	}

@@ -51,7 +51,8 @@ template <class CI, class CO, class G> struct LstmLayer: public Layer
 #endif		
 	
 	//functions
-	LstmLayer(const string& name, const vector<int>& directions, size_t nb, size_t cpb = 1, LstmLayer<CI,CO,G>* ps = 0):
+	LstmLayer(const string& name, const vector<int>& directions, size_t nb, size_t cpb = 1,
+			LstmLayer<CI,CO,G>* ps = 0):
 			Layer(name, directions, (cpb + directions.size() + 2) * nb, nb),	
 			numBlocks(nb),
 			cellsPerBlock(cpb),
@@ -75,12 +76,14 @@ template <class CI, class CO, class G> struct LstmLayer: public Layer
 #ifdef PEEPS
 			,peepSource(ps),
 			peepRange(peepSource ? peepSource->peepRange 
-					  : WeightContainer::instance().new_parameters(peepsPerBlock*numBlocks, name, name, name + "_peepholes"))
+					  : WeightContainer::instance().new_parameters(peepsPerBlock*numBlocks,
+							  name, name, name + "_peepholes"))
 #endif
 	{		
 		if (peepSource)
 		{
-			WeightContainer::instance().link_layers(name, name, name + "_peepholes", peepRange.first, peepRange.second);
+			WeightContainer::instance().link_layers(name, name, name + "_peepholes",
+					peepRange.first, peepRange.second);
 		}
 		
 		//initialise the state delays
@@ -245,7 +248,8 @@ template <class CI, class CO, class G> struct LstmLayer: public Layer
 			
 			//output gate error
 			real_t outGateError = G::deriv(outGateAct) * 
-				inner_product(preOutGateActBegin + cellStart, preOutGateActBegin + cellEnd, outputErrorBegin + cellStart, 0.0);
+				inner_product(preOutGateActBegin + cellStart, preOutGateActBegin + cellEnd,
+						outputErrorBegin + cellStart, 0.0);
 			
 			//cell pds (dE/dState)
 			LOOP(int c, span(cellStart, cellEnd))
@@ -276,7 +280,8 @@ template <class CI, class CO, class G> struct LstmLayer: public Layer
 			
 			//input gate error
 			*errorIt = G::deriv(inGateAct) * 
-				inner_product(cellErrorBegin + cellStart, cellErrorBegin + cellEnd, preGateStateBegin + cellStart, 0.0);
+				inner_product(cellErrorBegin + cellStart, cellErrorBegin + cellEnd,
+						preGateStateBegin + cellStart, 0.0);
 			++errorIt;
 			
 			//forget gate error
@@ -286,7 +291,8 @@ template <class CI, class CO, class G> struct LstmLayer: public Layer
 				if (os.begin())
 				{
 					*errorIt = G::deriv(forgetGateActBegin[fgStart + d]) * 
-						inner_product(cellErrorBegin + cellStart, cellErrorBegin + cellEnd, os.begin() + cellStart, 0.0);
+						inner_product(cellErrorBegin + cellStart, cellErrorBegin + cellEnd,
+								os.begin() + cellStart, 0.0);
 				}
 				else
 				{

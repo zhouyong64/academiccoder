@@ -69,6 +69,7 @@ struct Mdrnn
 		inputBlock(conf.get_list<size_t>("inputBlock", 0, data.numDims)),
 		inputBlockLayer(in(inputBlock, 0) ? 0 : add_layer(new BlockLayer(inputLayer, inputBlock), false))
 	{
+		cout<<"---------------------------"<<endl;
 	}
 	virtual ~Mdrnn()
 	{
@@ -287,7 +288,8 @@ struct Mdrnn
 					}
 				}
 			}
- 			add_connection(new FullConnection(oldConn->from == oldConn->to ? dest : oldConn->from, dest, delay, oldConn));
+ 			add_connection(new FullConnection(oldConn->from == oldConn->to ? dest : oldConn->from,
+ 					dest, delay, oldConn));
 			++numCopied;
  		}
 		return numCopied;
@@ -315,11 +317,13 @@ struct Mdrnn
 			connect_layers(from, to);
 		}	
 	}
-	int add_hidden_level(const string& type, int size, bool recurrent = true, const string& name = "hidden", bool addBias = true)
+	int add_hidden_level(const string& type, int size, bool recurrent = true, const string& name = "hidden",
+			bool addBias = true)
 	{
 		int levelNum = hiddenLevels.size();
 		hiddenLevels.resize(levelNum + 1);
-		add_hidden_layers_to_level(type, size, recurrent, name, 0, levelNum, empty_list_of<bool>().repeat(num_seq_dims(), true), addBias);
+		add_hidden_layers_to_level(type, size, recurrent, name, 0, levelNum,
+				empty_list_of<bool>().repeat(num_seq_dims(), true), addBias);
 		return levelNum;
 	}
 	void feed_forward_layer(Layer* layer)

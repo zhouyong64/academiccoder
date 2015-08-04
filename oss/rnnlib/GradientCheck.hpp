@@ -147,12 +147,14 @@ struct GradientCheck
 			
 			real_t algoDeriv = derivs[i];
 			int index = i - begin;
-			real_t threshold = pow((real_t)10.0, max((real_t)0.0, ceil(log10(min(fabs(algoDeriv), fabs(numericDeriv)))))-(int)sigFigs);
+			real_t threshold = pow((real_t)10.0, max((real_t)0.0, ceil(log10(min(fabs(algoDeriv),
+					fabs(numericDeriv)))))-(int)sigFigs);
 			real_t diff = fabs(numericDeriv - algoDeriv);
 			bool wrong = (isnan(diff) || diff > threshold);
 			if (verbose || wrong)
 			{
-				out << "weight " << index << " numeric deriv " << numericDeriv << " algorithmic deriv " << algoDeriv << endl;
+				out << "weight " << index << " numeric deriv " << numericDeriv << " algorithmic deriv "
+						<< algoDeriv << endl;
 			}
 			if (wrong)
 			{

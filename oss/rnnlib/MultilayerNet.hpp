@@ -50,13 +50,15 @@ struct MultilayerNet: public Mdrnn
 			{
 				LOOP(Layer* l, hiddenLevels[i])
 				{
+					cout<<"hiddenBlocks.at(i) "<<hiddenBlocks.at(i).at(0)<<" "<<hiddenBlocks.at(i).at(1)<<endl;
 					blocks += this->add_layer(new BlockLayer(l, hiddenBlocks.at(i)));
 				}
 			}
 			vector<Layer*>& topLayers = blocks.size() ? blocks : hiddenLevels[i];
 			if (i < subsampleSizes.size())
 			{
-				input = this->add_layer(subsampleType, "subsample_" + level_suffix, subsampleSizes.at(i), empty_list_of<int>().repeat(this->num_seq_dims(), 1), subsampleBias, false);
+				input = this->add_layer(subsampleType, "subsample_" + level_suffix, subsampleSizes.at(i),
+						empty_list_of<int>().repeat(this->num_seq_dims(), 1), subsampleBias, false);
 				LOOP(Layer* l, topLayers)
 				{
 					this->connect_layers(l, input);
@@ -102,7 +104,8 @@ struct MultilayerNet: public Mdrnn
  		else if (task == "transcription")
  		{
 			check(this->num_seq_dims(), "cannot perform transcription wth 0D net");
-			output = add_output_layer(new TranscriptionLayer(out, outputName, data.targetLabels, conf.get<bool>("confusionMatrix", false)));
+			output = add_output_layer(new TranscriptionLayer(out, outputName, data.targetLabels,
+					conf.get<bool>("confusionMatrix", false)));
 			if (this->num_seq_dims() > 1)
 			{
 				output = this->collapse_layer(hiddenLayers.back(), output, list_of(true));

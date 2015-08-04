@@ -112,7 +112,8 @@ struct TranscriptionLayer: public SoftmaxLayer, public NetworkOutput
 		}
 		if (totalTime < requiredTime)
 		{
-			out << "warning, seq " << seq.tag << " has requiredTime " << requiredTime << " > totalTime " << totalTime << endl;
+			out << "warning, seq " << seq.tag << " has requiredTime " << requiredTime
+					<< " > totalTime " << totalTime << endl;
 			return 0;
 		}		
 		totalSegments = (seq.targetLabelSeq.size() * 2) + 1;
@@ -188,7 +189,8 @@ struct TranscriptionLayer: public SoftmaxLayer, public NetworkOutput
 				{
 					int labelIndex = s/2;
 					int labelNum = seq.targetLabelSeq[labelIndex];
-					bv = (oldBvars[s] * oldLogActs[labelNum] * prior_label_prob(labelIndex)) + (oldBvars[s + 1] * oldLogActs[blank]);
+					bv = (oldBvars[s] * oldLogActs[labelNum] * prior_label_prob(labelIndex)) +
+							(oldBvars[s + 1] * oldLogActs[blank]);
 					if (s < (totalSegments-2))
 					{
 						int nextLabelNum = seq.targetLabelSeq[labelIndex + 1];
@@ -265,17 +267,21 @@ struct TranscriptionLayer: public SoftmaxLayer, public NetworkOutput
 			LOOP (const subsPair& p, alignment.subsMap)
 			{
 				int refIndex = p.first;
-				errorMap["_" + targetLabels[refIndex] + "_substitutions"] += (real_t) sum_right(p.second) / normFactor;
+				errorMap["_" + targetLabels[refIndex] + "_substitutions"] +=
+						(real_t) sum_right(p.second) / normFactor;
 				LOOP (const PII& p2, p.second)
 				{
-					errorMap["_" + targetLabels[refIndex] + "->" + targetLabels[p2.first]] += (real_t)p2.second / normFactor;
+					errorMap["_" + targetLabels[refIndex] + "->" + targetLabels[p2.first]]
+					         += (real_t)p2.second / normFactor;
 				}
 			}	
 		}
 		if (verbose)
 		{
-			out << "target label sequence (length " << seq.targetLabelSeq.size() << "):" << endl << label_seq_to_str(seq.targetLabelSeq, targetLabels) << endl;
-			out << "output label sequence (length " << outputLabelSeq.size() << "):" << endl << label_seq_to_str(outputLabelSeq, targetLabels) << endl;
+			out << "target label sequence (length " << seq.targetLabelSeq.size() << "):" <<
+					endl << label_seq_to_str(seq.targetLabelSeq, targetLabels) << endl;
+			out << "output label sequence (length " << outputLabelSeq.size() << "):" << endl
+					<< label_seq_to_str(outputLabelSeq, targetLabels) << endl;
 		}
 		return ctcError;
 	}

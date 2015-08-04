@@ -113,7 +113,8 @@ int main(int argc, char* argv[])
 	ostream& out = tout ? *tout : cout;
 	vector<string> dataFiles = conf.get_list<string>(dataFileString);
 	int dataFileNum = conf.get<int>("dataFileNum", 0);
-	check(dataFiles.size() > dataFileNum, "no " + ordinal(dataFileNum) + " file in size " + str(dataFiles.size()) + " file list " + dataFileString + " in " + configFilename);
+	check(dataFiles.size() > dataFileNum, "no " + ordinal(dataFileNum) + " file in size " +
+			str(dataFiles.size()) + " file list " + dataFileString + " in " + configFilename);
 	string datafile = dataFiles[dataFileNum];
 	DataHeader header(datafile, task, 1);
 	DataSequence* testSeq = 0;
@@ -143,7 +144,8 @@ int main(int argc, char* argv[])
 
 	//create trainer
 	Trainer trainer(out, net, conf);
-	out << "setting random seed to " << Random::set_seed(conf.get<unsigned long int>("randSeed", 0)) << endl << endl;
+	out << "setting random seed to " << Random::set_seed(conf.get<unsigned long int>("randSeed", 0))
+	<< endl << endl;
 	if (conf.get<bool>("loadWeights", false))
 	{
 		out << "loading dynamic data from "  << conf.filename << endl;
@@ -154,7 +156,8 @@ int main(int argc, char* argv[])
 	int numRandWts = wc.randomise(initWeightRange);
 	if (numRandWts)
 	{
-		out << numRandWts << " uninitialised weights randomised uniformly in [-" << initWeightRange << "," << initWeightRange << "]" << endl;
+		out << numRandWts << " uninitialised weights randomised uniformly in [-" << initWeightRange << ","
+				<< initWeightRange << "]" << endl;
 	}
 	if (testSeq && conf.get<bool>("testDistortions", false) && trainer.print_distortions())
 	{
@@ -183,7 +186,8 @@ int main(int argc, char* argv[])
 		net->print_output_shape(out);
 		Layer* outputLayer = net->outputLayers.size() ? net->outputLayers.front() : net->hiddenLayers.back();
 		int D = outputLayer->num_seq_dims() + 1;
-		check((jacobianCoords.size() == D) || (jacobianCoords.size() == (D - 1)), "Jacobian coords length " + str(jacobianCoords.size()) + " for output layer depth " + str(D));
+		check((jacobianCoords.size() == D) || (jacobianCoords.size() == (D - 1)), "Jacobian coords length " +
+				str(jacobianCoords.size()) + " for output layer depth " + str(D));
 		if (jacobianCoords.size() == D)
 		{
 			outputLayer->outputErrors.get(jacobianCoords) = outputLayer->outputActivations.get(jacobianCoords);

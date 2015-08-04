@@ -41,11 +41,12 @@ struct FullConnection: public Connection
 	FullConnection(Layer* f, Layer* t, const vector<int>& d = empty_list_of<int>(), FullConnection* s = 0):
 		Connection(make_name(f, t, d), f, t),
 		source(s),
-		paramRange(source ? source->paramRange : WeightContainer::instance().new_parameters(this->from->output_size() * this->to->input_size(), this->from->name, this->to->name, name))	{
+		paramRange(source ? source->paramRange : WeightContainer::instance().new_parameters(this->from->output_size() *
+				this->to->input_size(), this->from->name, this->to->name, name))	{
 		if (source)
 		{
-			WeightContainer::instance().link_layers(this->from->name, this->to->name, this->name, 
-													paramRange.first, paramRange.second);
+			WeightContainer::instance().link_layers(this->from->name, this->to->name,
+					this->name, paramRange.first, paramRange.second);
 		}
 		set_delay(d);
 		assert(num_weights() == (this->from->output_size() * this->to->input_size()));

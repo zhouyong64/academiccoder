@@ -100,7 +100,8 @@ struct Trainer: public DataExporter
 		task(config.get<string>("task")),
 		dataFraction(config.get<real_t>("dataFraction", 1)),
 		seqsPerWeightUpdate(config.get<int>("seqsPerWeightUpdate", 1)),
-		batchLearn(config.get<bool>("batchLearn", (config.get<string>("optimiser", "steepest") == "rprop") && (seqsPerWeightUpdate == 1))), 
+		batchLearn(config.get<bool>("batchLearn", (config.get<string>("optimiser", "steepest") == "rprop")
+				&& (seqsPerWeightUpdate == 1))),
 		trainFiles(config.get_list<string>("trainFile"), task, !batchLearn, dataFraction),
 		testFiles(config.get_list<string>("testFile"), task, false, dataFraction),
 		valFiles(config.get_list<string>("valFile"), task, false, dataFraction),
@@ -747,7 +748,8 @@ struct Trainer: public DataExporter
 		fill(derivs, 0);
 		fill(mdlStdDevDerivs, 0);
 	}
-	bool check_for_best(const DatasetErrors& currentErrors, map<string, pair<int, DatasetErrors> >& bestErrors, int epoch)
+	bool check_for_best(const DatasetErrors& currentErrors,
+			map<string, pair<int, DatasetErrors> >& bestErrors, int epoch)
 	{
 		bool newBest = false;
 		LOOP(const PSD& p, currentErrors.errors)
