@@ -270,7 +270,8 @@ template <class CI, class CO, class G> struct LstmLayer: public Layer
 					if (nextErrs.begin())
 					{
 #ifdef PEEPS
-						deriv += (nextErrs[gateStart + 1 + d] * fgPeepWt) + (nextErrs[gateStart] * igPeepWt);
+						deriv += (nextErrs[gateStart + 1 + d] * fgPeepWt) +
+								(nextErrs[gateStart] * igPeepWt);
 #endif
 						deriv += (nextFgActs[d][fgStart + d] * nextCellErrors[d][c]);
 					}

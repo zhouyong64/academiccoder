@@ -196,7 +196,8 @@ struct TranscriptionLayer: public SoftmaxLayer, public NetworkOutput
 						int nextLabelNum = seq.targetLabelSeq[labelIndex + 1];
 						if (labelNum != nextLabelNum)
 						{
-							bv += (oldBvars[s+2] * oldLogActs[nextLabelNum] * prior_label_prob(labelIndex + 1));
+							bv += (oldBvars[s+2] * oldLogActs[nextLabelNum] *
+									prior_label_prob(labelIndex + 1));
 						}
 					}
 				}
@@ -207,7 +208,8 @@ struct TranscriptionLayer: public SoftmaxLayer, public NetworkOutput
 					bv = oldBvars[s] * oldLogActs[blank];
 					if (s < (totalSegments-1))
 					{
-						bv += (oldBvars[s+1] * oldLogActs[seq.targetLabelSeq[s/2]] * prior_label_prob(s/2));
+						bv += (oldBvars[s+1] * oldLogActs[seq.targetLabelSeq[s/2]] *
+								prior_label_prob(s/2));
 					}
 				}
 				bvars[s] = bv;

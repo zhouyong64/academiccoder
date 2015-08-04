@@ -148,9 +148,10 @@ struct Trainer: public DataExporter
 			}
 			else
 			{
-				mdlOptimiser = new SteepestDescent(mdlOptName, out, mdlStdDevs, mdlStdDevDerivs,
-												   config.get<real_t>("mdlLearnRate", learnRate), 
-												   config.get<real_t>("mdlMomentum", momentum));
+				mdlOptimiser = new SteepestDescent(mdlOptName, out,
+						mdlStdDevs, mdlStdDevDerivs,
+						config.get<real_t>("mdlLearnRate", learnRate),
+						config.get<real_t>("mdlMomentum", momentum));
 			}
 			SAVE(mdlPriorMean);
 			SAVE(mdlPriorVariance);
@@ -757,8 +758,8 @@ struct Trainer: public DataExporter
 			const string& errName = p.first;
 			real_t err = p.second;
 			if (in(criteria, errName) && (!in(bestErrors, errName) 
-										  || !(in(bestErrors[errName].second.errors, errName)) 
-										  || err < bestErrors[errName].second.errors[errName]))
+					|| !(in(bestErrors[errName].second.errors, errName))
+					|| err < bestErrors[errName].second.errors[errName]))
 			{
 				newBest = true;
 				bestErrors[errName] = make_pair(epoch, currentErrors);
