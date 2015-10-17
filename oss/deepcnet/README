@@ -1,0 +1,23 @@
+ _____                   _____ _   _      _
+|  __ \                 / ____| \ | |    | |
+| |  | | ___  ___ _ __ | |    |  \| | ___| |_
+| |  | |/ _ \/ _ \ '_ \| |    | . ` |/ _ \ __|
+| |__| |  __/  __/ |_) | |____| |\  |  __/ |_
+|_____/ \___|\___| .__/ \_____|_| \_|\___|\__|
+                 | |
+                 |_|
+
+Ben Graham - 9 November 2013
+Supporting code for: Sparse arrays of signatures for online character recognition
+Implementation of DeepCNets convolutional neural networks.
+
+Instructions for use:
+Check you have the Nvidia CUDA SDK installed.
+Put data files in the Data/ directory.
+Then run "make x" where x is one of {mnist, ujipenchars, assamese, casiaOnline, casiaOffline, pendigits, cifar10}.
+
+The network parameters are specified in the .cu files, one per dataset.
+
+Aside:
+In the paper, most of the results are using RECTIFIEDLINEAR units in the first n-2 layers, TANH units in the (n-1)th layer and SOFTMAX in the final layer.
+For CNNs with dropout, RECTIFIEDLINEAR units were used for all of the first n-1 layers---this is how the DeepCNet object created in the file CNN.h is set to behave.
