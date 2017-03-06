@@ -1,6 +1,6 @@
 Eblearn Project
 --------------------------------------------------------------------------------
-
+Joe update
 For detailed installation, please refer to doc/install.shtml.
 
 ** Quick install **
