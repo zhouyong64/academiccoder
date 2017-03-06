@@ -1,6 +1,6 @@
 Eblearn Project
 --------------------------------------------------------------------------------
-Joe update
+Joe update auto commit
 For detailed installation, please refer to doc/install.shtml.
 
 ** Quick install **
