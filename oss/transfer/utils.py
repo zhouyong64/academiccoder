@@ -225,7 +225,171 @@ def testHttp(vocf):
 			dstf = 'spider/' + cand + '.html'
 			with codecs.open(dstf, "w", "utf-8") as fw:
 				fw.write(f.read().decode('utf-8'))
-											
+				
+def testHttp2():
+# 	cands,_ = get_lines(vocf,split=False)
+	for i in range(5,10):
+		stime = np.random.randint(6,12)
+		time.sleep(stime)
+# 		params = urllib.parse.urlencode({'q': cand})
+		url = "http://www.xinshipu.com/jiachangzuofa/%s/" % i
+		with urllib.request.urlopen(url) as f:
+			dstf = 'spider/' + str(i) + '.html'
+			with codecs.open(dstf, "w", "utf-8") as fw:
+				fw.write(f.read().decode('utf-8'))
+				
+def getTrueDish(htmldir,dst):
+	fs=os.listdir(htmldir)
+	cands = set()
+	for f in fs:
+		fn = htmldir + '/' + f
+		term = f.split('.')[0]
+		count = 0
+		with codecs.open(fn, "r", "utf-8") as fr:
+			for line in fr.readlines():
+				line = line.strip()
+				if '没有你要的结果' in line:
+					continue
+				if term in line:
+					count+=1
+			if count > 3:
+				cands.add(term)
+	print('how many left:',len(cands))
+	with codecs.open(dst, "w", "utf-8") as fw:
+		for cand in cands:
+			fw.write(cand + '\n')
+
+
+def getTrueDish2(htmldir,dst):
+	fs=os.listdir(htmldir)
+	cands = set()
+	for f in fs:
+		fn = htmldir + '/' + f
+		term = f.split('.')[0]
+		count = 0
+		with codecs.open(fn, "r", "utf-8") as fr:
+			for line in fr.readlines():
+				line = line.strip()
+				cue = term + '做法大全'
+				cue2 = term + '食谱'
+				if cue in line or cue2 in line:
+					cands.add(term)
+					break
+
+	print('how many left:',len(cands))
+	with codecs.open(dst, "w", "utf-8") as fw:
+		for cand in cands:
+			fw.write(cand + '\n')
+			
+def filter_voc_candidate(srcf,vocf,dst):
+	food_dict,_ = get_lines(vocf,split=False)
+	
+	cands,_ = get_lines(srcf,split=False)
+	
+	terms = set()
+	if True:
+		for cand in cands:
+			if cand not in food_dict:
+				terms.add(cand)
+				
+	with codecs.open(dst, "w", "utf-8") as fw:
+		for term in terms:
+			fw.write(term + '\n')
+
+
+def find_same_dish(srcf):
+	_,dishes = get_lines4(srcf,split=True)
+	dishes = set([di[0] for di in dishes])
+	len_map = {}
+	dish_map = {}
+	
+	for dish in dishes:
+		leng = len(dish)
+		if leng not in len_map:
+			len_map[leng] = []
+			dish_map[leng] = []
+		char_set = set([i for i in dish])
+		if char_set in len_map[leng]:
+			idx = len_map[leng].index(char_set)
+			otherDish = dish_map[leng][idx]
+			print('same without order',dish,otherDish)
+		else:
+			len_map[leng].append(char_set)
+			dish_map[leng].append(dish)
+
+
+def extract_terms(srcd,dstf):
+	fs = os.listdir(srcd)
+	fw = codecs.open(dstf, "w", "utf-8")
+	for f in fs:
+		if f.endswith('.html'):
+			fn = srcd + '/' + f
+			with codecs.open(fn, "r", "utf-8") as fr:
+				for line in fr.readlines():
+					line = line.strip()
+					if len(line) > 0:
+						if line.startswith('<title>'):
+							sidx = len('<title>')
+							eidx = line.index('的')
+							term = line[sidx:eidx]
+							fw.write(term + '\n')
+	fw.close()
+
+def filter_by_len(srcf,dstf):
+	dishes,_ = get_lines(srcf,split=False)
+	dishes = [d for d in dishes if len(d) < 5]
+	with codecs.open(dstf, "w", "utf-8") as fw:
+		for dish in dishes:
+			fw.write(dish + '\n')
+
+def is_number(s):
+	try:
+		float(s)
+		return True
+	except ValueError:
+		return False
+
+def extract_zones(srcf,zones):
+	lines,_ = get_lines(srcf,split=False)
+	patt = 'http://www.lepu.cn/shop/'
+	for line in lines:
+		if len(line) > 0:
+			if line.count(patt) > 0:
+				idx = line.index(patt)
+				eIdx = line.index('"',idx)
+				url = line[idx:eIdx]
+				ss = url.split('/')
+# 				print(ss[-2],ss[-3])
+				if zones.get(ss[-3]) is None:
+					zones[ss[-3]] = []
+				zones[ss[-3]].append(ss[-2])
+							
+def extract_sites(srcd,dstf):
+	patt = 'http://www.lepu.cn/shop/detail/'
+	fs = os.listdir(srcd)
+	sites = set()
+	fw = codecs.open(dstf, "w", "utf-8")
+	for f in fs:
+		if f.endswith('.html'):
+			fn = srcd + '/' + f
+			with codecs.open(fn, "r", "utf-8") as fr:
+				for line in fr.readlines():
+					line = line.strip()
+					if len(line) > 0:
+						if line.count(patt) > 0:
+							idx = line.index(patt)
+							eIdx = line.index('"',idx)
+							url = line[idx:eIdx]
+							ss = url.split('/')
+							if ss[-1] == '' and is_number(ss[-2]):
+								print('url',url)
+								sites.add(url)
+	
+	for url in sites:
+		fw.write(url + '\n')							
+	fw.close()
+	
+												
 if __name__ == '__main__':
 # 	temp()
 	base = '/Users/joe/Downloads/dish/'
@@ -235,5 +399,16 @@ if __name__ == '__main__':
 # 	analyze_cluster(base + 'cluster10k.txt',base + 'cluster10k_d1.txt')
 # 	extract_voc_from_txt(base + 'online.txt',base + 'voc_from_online.txt',\
 #  			base + 'duang_dish_raw_voc_n_100t_fix.txt')
-	testHttp('voc_candi.txt')
+# 	testHttp('voc_candi.txt')
+# 	getTrueDish('spider/')
+# 	filter_voc_candidate('/Users/joe/Documents/workspace/Py3Test/embed_data_norm.txt',\
+#                         base + '/voc_candidate_100k.txt',\
+#                         base + '/voc_candidate_490w.txt')
+	
+# 	find_same_dish('embed_data_norm_terms12900_oldDict.txt')
+# 	extract_terms('spider/','terms463.txt')
+# 	filter_by_len(base+'terms20k.txt',base+'terms20k_1234only.txt')
+# 	extract_sites('spider_site/chaoyang/','dummy.txt')
+# 	extract_zones('sites_info/haidian_zones.txt',{})
+# 	testHttp2()
 # 	random_select('/Users/joe/Downloads/dish/duang_dish_tail490w_raw_cleanByRE2.txt','/Users/joe/Downloads/dish/testset1k.txt')
