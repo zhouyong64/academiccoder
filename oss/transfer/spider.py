@@ -6,7 +6,7 @@ import urllib.parse
 import codecs
 import os
 from utils import extract_zones
-
+from utils import get_lines
 
 def http_request(start,end):
     dname = 'spider'
@@ -23,7 +23,7 @@ def http_request(start,end):
                 fw.write(f.read().decode('utf-8'))
                 
 
-def http_request_for_site_data(dname,areas,pages_per_zone=3):
+def http_request_for_site_url(dname,areas,pages_per_zone=3):
     base = 'http://www.lepu.cn/shop/'
     if not os.path.exists(dname):
         os.mkdir(dname)
@@ -48,13 +48,33 @@ def http_request_for_site_data(dname,areas,pages_per_zone=3):
                             fw.write(f.read().decode('utf-8'))
                 except:
                     pass
-                        
-def crawl_site_data(save_dir,pages_per_zone=5):
+
+def http_request_for_site_data(urls,dname):
+    if not os.path.exists(dname):
+        os.makedirs(dname)
+    for i,url in enumerate(urls):
+        stime = random.randint(20,30)
+        time.sleep(stime)
+        print('processing',i,url)
+        idn = url.split('/')[-2]
+        try:
+            with urllib.request.urlopen(url) as f:
+                dstf = dname + '/' + idn + '.html'
+                with codecs.open(dstf, "w", "utf-8") as fw:
+                    fw.write(f.read().decode('utf-8'))
+        except:
+            pass
+                                  
+def crawl_site_url(save_dir,pages_per_zone=5):
     areas = {}
     extract_zones('sites_info/haidian_zones.txt',areas)
     extract_zones('sites_info/chaoyang_zones.txt',areas)
-    http_request_for_site_data(save_dir,areas,pages_per_zone)
-                
+    http_request_for_site_url(save_dir,areas,pages_per_zone)
+
+def crawl_site_data(save_dir,url_file):
+    urls,_ = get_lines(url_file,split=False)
+    http_request_for_site_data(urls,save_dir)
+             
 '''
 把main中的your_range改成自己负责的区域，如(20001, 40000)，然后开始运行即可。
 为了防止把服务器搞崩，也为了防止触动它可能的反爬虫机制，http_request中设置了不短的sleep time.
@@ -72,4 +92,6 @@ if __name__ == '__main__':
 #     http_request(start,end)
 #     http_request_for_site_data(['chaoyang','haidian'],[['wangjingdong','chaoyanggongyuan'],['wudaokou','xierqi']],2)
 #     http_request_for_site_data(['haidian'],[['wudaokou','xierqi']],2)
-    crawl_site_data('spider_site/')
+#     crawl_site_url('spider_site/')
+    crawl_site_data('sites_data/haidian/','sites_info/haidian_urls.txt')
+    crawl_site_data('sites_data/chaoyang/','sites_info/chaoyang_urls.txt')
