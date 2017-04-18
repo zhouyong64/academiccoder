@@ -156,7 +156,8 @@ class AccuracyOfEpochMonitorSegmentation(object) :
                                     
             logStrClass = logStr + ", " + classString + ":"
             self.logger.print3(logStrClass+"\t mean accuracy:   \t"+ strFl4fNA(meanAccClassOfSubep, self.NA_PATTERN)+\
-                               "\t=> (TruePos+TrueNeg)/All-Predicted-Voxels = "+str(numOfTpInSubep+numOfTnInSubep)+"/"+str(numOfRpInSubep+numOfRnInSubep))        
+                               "\t=> (TruePos+TrueNeg)/All-Predicted-Voxels = "+str(numOfTpInSubep+numOfTnInSubep)+"/"\
+                               +str(numOfRpInSubep+numOfRnInSubep))        
             self.logger.print3(logStrClass+"\t mean sensitivity:\t"+ strFl4fNA(meanAccOnPosOfSubep, self.NA_PATTERN)+\
                                "\t=> TruePos/RealPos = "+str(numOfTpInSubep)+"/"+str(numOfRpInSubep))
             self.logger.print3(logStrClass+"\t mean specificity:\t"+ strFl4fNA(meanAccOnNegOfSubep, self.NA_PATTERN)+\
