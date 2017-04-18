@@ -8,15 +8,18 @@
 import os
 def makeFoldersToSaveFilesForThisRun():
     #Create folders for saving the prediction images:
-    parentFolderForSavingPredictedImages = folderToSavePredictionImages[:folderToSavePredictionImages.find("/")] #Usually should be ./predictions"
+    parentFolderForSavingPredictedImages = \
+        folderToSavePredictionImages[:folderToSavePredictionImages.find("/")] #Usually should be ./predictions"
     if not os.path.exists(parentFolderForSavingPredictedImages) :
         os.mkdir(parentFolderForSavingPredictedImages)
     if not os.path.exists(folderToSavePredictionImages) : #The inner folder, for this particular run.
         os.mkdir(folderToSavePredictionImages)
-    fullFolderPathToSavePredictedImagesFromDiceEvaluationOnValidationCasesDuringTraining = folderToSavePredictionImages + "/validationDuringTraining/"
+    fullFolderPathToSavePredictedImagesFromDiceEvaluationOnValidationCasesDuringTraining = \
+        folderToSavePredictionImages + "/validationDuringTraining/"
     if not os.path.exists(fullFolderPathToSavePredictedImagesFromDiceEvaluationOnValidationCasesDuringTraining) :
         os.mkdir(fullFolderPathToSavePredictedImagesFromDiceEvaluationOnValidationCasesDuringTraining)
-    fullFolderPathToSavePredictedImagesFromDiceEvaluationOnTestingCasesDuringTraining = folderToSavePredictionImages + "/testingDuringTraining/"
+    fullFolderPathToSavePredictedImagesFromDiceEvaluationOnTestingCasesDuringTraining = \
+        folderToSavePredictionImages + "/testingDuringTraining/"
     if not os.path.exists(fullFolderPathToSavePredictedImagesFromDiceEvaluationOnTestingCasesDuringTraining) :
         os.mkdir(fullFolderPathToSavePredictedImagesFromDiceEvaluationOnTestingCasesDuringTraining)
     fullFolderPathToSavePredictedImagesDuringTesting = folderToSavePredictionImages + "/testing/"

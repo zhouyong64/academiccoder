@@ -49,22 +49,27 @@ class TestSessionParameters(object) :
         self.cnnModelFilepath = cnnModelFilepath
         
         #Input:
-        self.channelsFilepaths = listWithAListPerCaseWithFilepathPerChannel #[[case1-ch1, case1-ch2], ..., [caseN-ch1, caseN-ch2]]
+        #[[case1-ch1, case1-ch2], ..., [caseN-ch1, caseN-ch2]]
+        self.channelsFilepaths = listWithAListPerCaseWithFilepathPerChannel 
         self.providedGt = True if gtLabelsFilepaths <> None else False
         self.gtLabelsFilepaths = gtLabelsFilepaths if gtLabelsFilepaths <> None else []
         self.providedRoiMasks = True if roiMasksFilepaths <> None else False
         self.roiMasksFilepaths = roiMasksFilepaths if roiMasksFilepaths <> None else []
         
         #Output:
-        self.namesToSavePredictionsAndFeatures = namesToSavePredictionsAndFeatures #Required. Given by the config file, and is then used to fill filepathsToSavePredictionsForEachPatient and filepathsToSaveFeaturesForEachPatient.
+        self.namesToSavePredictionsAndFeatures = namesToSavePredictionsAndFeatures #Required. Given by the config file, 
+        #and is then used to fill filepathsToSavePredictionsForEachPatient and filepathsToSaveFeaturesForEachPatient.
         #predictions
         self.saveSegmentation = saveSegmentation if saveSegmentation <> None else True
-        self.saveProbMapsBoolPerClass = saveProbMapsBoolPerClass if (saveProbMapsBoolPerClass <> None and saveProbMapsBoolPerClass <> []) else [True]*cnn3dInstance.numberOfOutputClasses
+        self.saveProbMapsBoolPerClass = saveProbMapsBoolPerClass if (saveProbMapsBoolPerClass <> None and \
+                                        saveProbMapsBoolPerClass <> []) else [True]*cnn3dInstance.numberOfOutputClasses
         self.filepathsToSavePredictionsForEachPatient = None #Filled by call to self.makeFilepathsForPredictionsAndFeatures()
         #features:
         self.saveIndividualFmImages = saveIndividualFmImages if saveIndividualFmImages <> None else False
-        self.saveMultidimensionalImageWithAllFms = saveMultidimensionalImageWithAllFms if saveMultidimensionalImageWithAllFms <> None else False
-        self.indicesOfFmsToVisualisePerPathwayAndLayer = [item if item <> None else [] for item in indicesOfFmsToVisualisePerPathwayAndLayer]
+        self.saveMultidimensionalImageWithAllFms = saveMultidimensionalImageWithAllFms if \
+                                    saveMultidimensionalImageWithAllFms <> None else False
+        self.indicesOfFmsToVisualisePerPathwayAndLayer = [item if item <> None else [] for item in \
+                                                          indicesOfFmsToVisualisePerPathwayAndLayer]
         self.filepathsToSaveFeaturesForEachPatient = None #Filled by call to self.makeFilepathsForPredictionsAndFeatures()
         
         #Preprocessing
@@ -77,7 +82,8 @@ class TestSessionParameters(object) :
         
         #HIDDENS, no config allowed for these at the moment:
         self.useSameSubChannelsAsSingleScale = True
-        self.subsampledChannelsFilepaths = "placeholder" #List of Lists with filepaths per patient. Only used when above is False.
+        #List of Lists with filepaths per patient. Only used when above is False.
+        self.subsampledChannelsFilepaths = "placeholder" 
         self.smoothChannelsWithGaussFilteringStdsForNormalAndSubsampledImage = [None, None]
         
         self._makeFilepathsForPredictionsAndFeatures( folderForPredictions, folderForFeatures )
@@ -91,9 +97,11 @@ class TestSessionParameters(object) :
         
         if self.namesToSavePredictionsAndFeatures <> None :
             for case_i in xrange(self.numberOfCases) :
-                filepathForCasePrediction = absPathToFolderForPredictionsFromSession + "/" + self.namesToSavePredictionsAndFeatures[case_i]
+                filepathForCasePrediction = absPathToFolderForPredictionsFromSession + "/" + \
+                    self.namesToSavePredictionsAndFeatures[case_i]
                 self.filepathsToSavePredictionsForEachPatient.append( filepathForCasePrediction )
-                filepathForCaseFeatures = absPathToFolderForFeaturesFromSession + "/" + self.namesToSavePredictionsAndFeatures[case_i]
+                filepathForCaseFeatures = absPathToFolderForFeaturesFromSession + "/" + \
+                    self.namesToSavePredictionsAndFeatures[case_i]
                 self.filepathsToSaveFeaturesForEachPatient.append( filepathForCaseFeatures )
                 
     def printParametersOfThisSession(self) :
@@ -114,7 +122,8 @@ class TestSessionParameters(object) :
         logPrint("User provided Region-Of-Interest Masks for faster inference = " + str(self.providedRoiMasks))
         logPrint("Filepaths of the ROI Masks provided per case = " + str(self.roiMasksFilepaths))
         if not self.providedRoiMasks :
-            logPrint(">>> WARN: Inference will be performed on whole scan. Consider providing a ROI image for faster results, if possible!")
+            logPrint(">>> WARN: Inference will be performed on whole scan. Consider providing a ROI image \
+            for faster results, if possible!")
             
         logPrint("~~~~~~~~~~~~~~~~~~~OUTPUT~~~~~~~~~~~~~~~")
         logPrint("Path to the main output-folder = " + str(self.mainOutputAbsFolder))
@@ -125,20 +134,24 @@ class TestSessionParameters(object) :
         logPrint("Save the probability maps = " + str(self.saveProbMapsBoolPerClass))
         logPrint("Paths where to save predictions per case = " + str(self.filepathsToSavePredictionsForEachPatient))
         if not (self.saveSegmentation or self.saveProbMapsBoolPerClass) :
-            logPrint(">>> WARN: Segmentation and Probability Maps won't be saved. I guess you only wanted the feature maps?")
+            logPrint(">>> WARN: Segmentation and Probability Maps won't be saved. \
+                I guess you only wanted the feature maps?")
             
         logPrint("~~~~~~~Ouput-parameters for Feature Maps (FMs)~~~~~~")
         logPrint("Save FMs in individual images = " + str(self.saveIndividualFmImages))
         logPrint("Save all requested FMs in one 4D image = " + str(self.saveMultidimensionalImageWithAllFms))
         if self.saveMultidimensionalImageWithAllFms :
-            logPrint(">>> WARN : The 4D image can be hundreds of MBytes if the CNN is big and many FMs are chosen to be saved. Configure wisely.")
-        logPrint("Indices of min/max FMs to save, per type of pathway (normal/subsampled/FC) and per layer = " + str(self.indicesOfFmsToVisualisePerPathwayAndLayer[:-1]))
+            logPrint(">>> WARN : The 4D image can be hundreds of MBytes if the CNN is big and many FMs are chosen \
+            to be saved. Configure wisely.")
+        logPrint("Indices of min/max FMs to save, per type of pathway (normal/subsampled/FC) and per layer = " + \
+                 str(self.indicesOfFmsToVisualisePerPathwayAndLayer[:-1]))
         logPrint("Save Feature Maps at = " + str(self.filepathsToSaveFeaturesForEachPatient))
         
         logPrint("~~~~~~~ Parameters for Preprocessing ~~~~~~")
         logPrint("Pad Input Images = " + str(self.padInputImagesBool))
         if not self.padInputImagesBool :
-            logPrint(">>> WARN: Inference near the borders of the image might be incomplete if not padded! Although some speed is gained if not padded. Task-specific, your choice.")
+            logPrint(">>> WARN: Inference near the borders of the image might be incomplete if not padded! Although \
+            some speed is gained if not padded. Task-specific, your choice.")
         logPrint("========== Done with printing session's parameters ==========")
         logPrint("=============================================================")
         

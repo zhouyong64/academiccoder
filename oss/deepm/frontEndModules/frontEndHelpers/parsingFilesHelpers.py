@@ -17,13 +17,16 @@ def getAbsPathEvenIfRelativeIsGiven(pathGiven, absolutePathToWhereRelativePathRe
         elif os.path.isfile(absolutePathToWhereRelativePathRelatesTo) :
             relativePathToWhatGiven = os.path.dirname(absolutePathToWhereRelativePathRelatesTo)
         else : #not file, not dir, exit.
-            print "ERROR: in [func:returnAbsolutePathEvenIfRelativePathIsGiven()] Given path :", absolutePathToWhereRelativePathRelatesTo, " does not correspond to neither an existing file nor a directory. Exiting!"; exit(1)
+            print "ERROR: in [func:returnAbsolutePathEvenIfRelativePathIsGiven()] Given path :", \
+            absolutePathToWhereRelativePathRelatesTo, \
+            " does not correspond to neither an existing file nor a directory. Exiting!"; exit(1)
         return os.path.normpath(relativePathToWhatGiven + "/" + pathGiven)
     
 def checkIfAllElementsOfAListAreFilesAndExitIfNot(pathToTheListingFile, list1) :
     for filepath in list1 :
         if not os.path.isfile(filepath) :
-            print "ERROR: in [checkIfAllElementsOfAListExistAndExitIfNot()] path:", filepath, " given in :", pathToTheListingFile," does not correspond to a file. Exiting!"
+            print "ERROR: in [checkIfAllElementsOfAListExistAndExitIfNot()] path:", filepath, " given in :", \
+            pathToTheListingFile," does not correspond to a file. Exiting!"
             print exit(1)
             
 def parseFileLinesInList(pathToListingFile) :
@@ -50,14 +53,19 @@ def parseAbsFileLinesInList(pathToListingFile) :
                     list1.append(os.path.normpath(pathToFolderContainingThisListFile + "/" + pathToFileParsed))
     return list1
 
-def checkListContainsCorrectNumberOfCasesOtherwiseExitWithError(numberOfCasesPreviously, pathToGivenListFile, listOfFilepathsToChannelIForEachCase) :
+def checkListContainsCorrectNumberOfCasesOtherwiseExitWithError(numberOfCasesPreviously, pathToGivenListFile, \
+                                                                listOfFilepathsToChannelIForEachCase) :
     numberOfContainedCasesInList = len(listOfFilepathsToChannelIForEachCase)
     if numberOfCasesPreviously <> numberOfContainedCasesInList :
-        print "ERROR: Given file:", pathToGivenListFile, " contains #", numberOfContainedCasesInList," entries, whereas previously checked files contained #", numberOfCasesPreviously,". All listing-files for channels, masks, etc, should contain the same number of entries, one for each case.\nExiting!"
+        print "ERROR: Given file:", pathToGivenListFile, " contains #", numberOfContainedCasesInList,\
+        " entries, whereas previously checked files contained #", numberOfCasesPreviously,\
+        ". All listing-files for channels, masks, etc, should contain the same number of entries, one for each case.\nExiting!"
         exit(1)
         
 def checkThatAllEntriesOfAListFollowNameConventions(listOfPredictionNamesForEachCaseInListingFile) :
     for entry in listOfPredictionNamesForEachCaseInListingFile :
         if entry.find("/") > -1 or entry.startswith(".") :
-            print "ERROR: in [checkThatAllEntriesOfAListFollowNameConventions()] while checking that all entries follow name-conventions. Entry \"", entry, "\" was found to begin with \'.\' or contain \'/\'. Please correct. Exiting!"
+            print "ERROR: in [checkThatAllEntriesOfAListFollowNameConventions()] while checking that all \
+            entries follow name-conventions. Entry \"", entry, "\" was found to begin with \'.\' or contain \'/\'. \
+            Please correct. Exiting!"
             print exit(1)
