@@ -320,7 +320,12 @@ def checkIfOptionalParametersAreGivenCorrectly(testConfig, testConfigFilepath) :
             valid1 = False
         if not valid1 :
             print "ERROR: Configuration parameter \"", testConfig.SAVE_PROBMAPS_PER_CLASS, \
-            "\" should be a list of booleans, one for each class of the task (including the background). True to save the predicted probability map for the corresponding class, False otherwise. As an example, it should be given in the form: ", testConfig.SAVE_PROBMAPS_PER_CLASS, " = [False, True, False] (python style boolean list). This would result in not saving the prob-maps for the class-0 (background), save for class-1, and not save for class-2. Please correct it or ommit it completely for default.\nExiting!"
+            "\" should be a list of booleans, one for each class of the task (including the background). \
+            True to save the predicted probability map for the corresponding class, False otherwise. \
+            As an example, it should be given in the form: ", testConfig.SAVE_PROBMAPS_PER_CLASS, \
+            " = [False, True, False] (python style boolean list). This would result in not saving the prob-maps \
+            for the class-0 (background), save for class-1, and not save for class-2. Please correct it or ommit \
+            it completely for default.\nExiting!"
             exit(1)
             
     #INDICES_OF_FMS_TO_SAVE
