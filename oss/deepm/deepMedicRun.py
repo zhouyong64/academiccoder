@@ -150,19 +150,19 @@ if __name__ == '__main__':
         absPathToPreTrainedModelGivenInCmdLine = getAbsPathEvenIfRelativeIsGiven(args.pretrained_model, cwd)  if \
         	args.pretrained_model else None # pretraining.
         listOfLayersToTransfer = args.layers_to_transfer if \
-        								args.layers_to_transfer else None # layers to transfer from pretrained model
+            args.layers_to_transfer else None # layers to transfer from pretrained model
         (cnnInstanceLoaded, filenameAndPathWhereNewlyCreatedModelWasSaved) = \
-        			deepMedicNewModel.deepMedicNewModelMain(absPathToModelConf, \
-        										absPathToPreTrainedModelGivenInCmdLine, listOfLayersToTransfer)
+        	deepMedicNewModel.deepMedicNewModelMain(absPathToModelConf, \
+        	absPathToPreTrainedModelGivenInCmdLine, listOfLayersToTransfer)
         
     if args.training_conf : #and not args.model_conf and not args.testing_conf: #Second part was checked already.
         #Run training
         from deepmedic.frontEndModules import deepMedicTrain
         absPathToTrainConf = getAbsPathEvenIfRelativeIsGiven(args.training_conf, cwd)
         absPathToCnnModelGivenInCmdLine = getAbsPathEvenIfRelativeIsGiven(args.saved_model, cwd)  if \
-        																	args.saved_model else None
+        	args.saved_model else None
         deepMedicTrain.deepMedicTrainMain(absPathToTrainConf, absPathToCnnModelGivenInCmdLine, cnnInstanceLoaded, \
-        									filenameAndPathWhereNewlyCreatedModelWasSaved, args.reset_optimizer)
+        	filenameAndPathWhereNewlyCreatedModelWasSaved, args.reset_optimizer)
         
     if args.testing_conf : #and not args.model_conf and not args.training_conf : #Second part was checked already.
         #Test with an existing model.
