@@ -64,7 +64,7 @@ protected:
 	void filter( MatrixXf & out, const MatrixXf & in, bool transpose ) const {
 		// Read in the values
 		if( ntype_ == NORMALIZE_SYMMETRIC || (ntype_ == NORMALIZE_BEFORE && !transpose) || 
-												(ntype_ == NORMALIZE_AFTER && transpose))
+(ntype_ == NORMALIZE_AFTER && transpose))
 			out = in*norm_.asDiagonal();
 		else
 			out = in;
@@ -96,7 +96,7 @@ protected:
 			MatrixXf ones = MatrixXf::Ones( a.rows(), a.cols() );
 			VectorXf norm3 = norm_.array()*norm_.array()*norm_.array();
 			MatrixXf r = kernelGradient( 0.5*( a.array()*fb.array() + 
-															fa.array()*b.array() ).matrix()*norm3.asDiagonal(), ones );
+fa.array()*b.array() ).matrix()*norm3.asDiagonal(), ones );
 			return - r + kernelGradient( a*norm_.asDiagonal(), b*norm_.asDiagonal() );
 		}
 		else if (ntype_ == NORMALIZE_AFTER ) {
@@ -174,7 +174,7 @@ PairwisePotential::~PairwisePotential(){
 	delete kernel_;
 }
 PairwisePotential::PairwisePotential(const MatrixXf & features, LabelCompatibility * compatibility, KernelType ktype, 
-														NormalizationType ntype) : compatibility_(compatibility) {
+NormalizationType ntype) : compatibility_(compatibility) {
 	kernel_ = new DenseKernel( features, ktype, ntype );
 }
 void PairwisePotential::apply(MatrixXf & out, const MatrixXf & Q) const {

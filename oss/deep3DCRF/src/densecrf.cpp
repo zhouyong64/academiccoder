@@ -81,7 +81,7 @@ void DenseCRF2D::addPairwiseGaussian ( float sx, float sy, LabelCompatibility * 
 	addPairwiseEnergy( feature, function, kernel_type, normalization_type );
 }
 void DenseCRF2D::addPairwiseBilateral ( float sx, float sy, float sr, float sg, float sb, const unsigned char* im, 
-					LabelCompatibility * function, KernelType kernel_type, NormalizationType normalization_type ) {
+LabelCompatibility * function, KernelType kernel_type, NormalizationType normalization_type ) {
 	MatrixXf feature( 5, N_ );
     for( int j=0; j<H_; j++ )
 		for( int i=0; i<W_; i++ ){
@@ -95,7 +95,7 @@ void DenseCRF2D::addPairwiseBilateral ( float sx, float sy, float sr, float sg, 
 }
 
 void DenseCRF3D::addPairwiseGaussian ( float sx, float sy, float sz, LabelCompatibility * function, KernelType kernel_type,
-																				 NormalizationType normalization_type ) {
+NormalizationType normalization_type ) {
     MatrixXf feature( 3, N_ );
     for( int k=0; k<Z_; k++ )
         for( int j=0; j<H_; j++ )
@@ -107,7 +107,7 @@ void DenseCRF3D::addPairwiseGaussian ( float sx, float sy, float sz, LabelCompat
     addPairwiseEnergy( feature, function, kernel_type, normalization_type );
 }
 void DenseCRF3D::addPairwiseBilateral1Mod ( float sx, float sy, float sz, float sMod1, const unsigned char* im, 
-				LabelCompatibility * function, KernelType kernel_type, NormalizationType normalization_type ) {
+LabelCompatibility * function, KernelType kernel_type, NormalizationType normalization_type ) {
     MatrixXf feature( 4, N_ );
     for( int k=0; k<Z_; k++ )
         for( int j=0; j<H_; j++ )
@@ -120,7 +120,7 @@ void DenseCRF3D::addPairwiseBilateral1Mod ( float sx, float sy, float sz, float 
     addPairwiseEnergy( feature, function, kernel_type, normalization_type );
 }
 void DenseCRF3D::addPairwiseBilateral2Mod ( float sx, float sy, float sz, float sMod1, float sMod2, 
-	const unsigned char* im, LabelCompatibility * function, KernelType kernel_type, NormalizationType normalization_type ) {
+const unsigned char* im, LabelCompatibility * function, KernelType kernel_type, NormalizationType normalization_type ) {
     MatrixXf feature( 5, N_ );
     for( int k=0; k<Z_; k++ )
         for( int j=0; j<H_; j++ )
@@ -134,7 +134,7 @@ void DenseCRF3D::addPairwiseBilateral2Mod ( float sx, float sy, float sz, float 
     addPairwiseEnergy( feature, function, kernel_type, normalization_type );
 }
 void DenseCRF3D::addPairwiseBilateral3Mod ( float sx, float sy, float sz, float sMod1, float sMod2, float sMod3, 
-	const unsigned char* im, LabelCompatibility * function, KernelType kernel_type, NormalizationType normalization_type ) {
+const unsigned char* im, LabelCompatibility * function, KernelType kernel_type, NormalizationType normalization_type ) {
     MatrixXf feature( 6, N_ );
     for( int k=0; k<Z_; k++ )
         for( int j=0; j<H_; j++ )
@@ -341,7 +341,7 @@ double DenseCRF::klDivergence( const MatrixXf & Q ) const {
 
 // Gradient computations
 double DenseCRF::gradient( int n_iterations, const ObjectiveFunction & objective, VectorXf * unary_grad, 
-												VectorXf * lbl_cmp_grad, VectorXf * kernel_grad) const {
+VectorXf * lbl_cmp_grad, VectorXf * kernel_grad) const {
 	// Run inference
 	std::vector< MatrixXf > Q(n_iterations+1);
 	MatrixXf tmp1, unary( M_, N_ ), tmp2;

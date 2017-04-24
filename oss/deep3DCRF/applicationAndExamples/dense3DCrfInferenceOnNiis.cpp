@@ -112,12 +112,12 @@ int saveNiiImageItk( std::string niiFullFilepathname, InputImageType::Pointer & 
 
  
 void makeNiiProbMapFromMatrixXfOfProbsAndSave(std::string folderForThePatientToSaveTheResultsIn,
-											std::string stringWithThePrefixOfTheFilenameToSaveResultingProbMaps, 
-											MatrixXf & probMaps1, //first row is the background class.
-											int numberOfForegroundClasses, //excluding background.
-											int * sizeOfImages, 
-											InputImageType::Pointer imgOneOfModsItkTypeForReferenceOfResultingImage,
-											ImageIOType::Pointer niftiImageIOForReferenceOfResultingImage) {
+std::string stringWithThePrefixOfTheFilenameToSaveResultingProbMaps, 
+MatrixXf & probMaps1, //first row is the background class.
+int numberOfForegroundClasses, //excluding background.
+int * sizeOfImages, 
+InputImageType::Pointer imgOneOfModsItkTypeForReferenceOfResultingImage,
+ImageIOType::Pointer niftiImageIOForReferenceOfResultingImage) {
 												
 	int	numberOfVoxelsInImage = sizeOfImages[0]*sizeOfImages[1]*sizeOfImages[2];
 
@@ -142,7 +142,7 @@ void makeNiiProbMapFromMatrixXfOfProbsAndSave(std::string folderForThePatientToS
 			for (int c=0; c<sizeOfImages[1]; c++) {
 				for (int r=0; r<sizeOfImages[0]; r++) {
 					index_img[0] = r; index_img[1] = c; index_img[2] = z;
-					voxel_val = probMaps1(class_i, r + c*sizeOfImages[0] + z*sizeOfImages[0]*sizeOfImages[1]);
+		voxel_val = probMaps1(class_i, r + c*sizeOfImages[0] + z*sizeOfImages[0]*sizeOfImages[1]);
 
 					imgOneOfModsItkTypeForReferenceOfResultingImage->SetPixel(index_img, voxel_val);
 				}
@@ -155,16 +155,16 @@ void makeNiiProbMapFromMatrixXfOfProbsAndSave(std::string folderForThePatientToS
 		std::string niiFullFilepathname = folderForThePatientToSaveTheResultsIn + "/" + 
 				stringWithThePrefixOfTheFilenameToSaveResultingProbMaps + convertNumToStr.str() + ".nii.gz";
 		saveNiiImageItk( niiFullFilepathname, imgOneOfModsItkTypeForReferenceOfResultingImage , 
-												niftiImageIOForReferenceOfResultingImage);
+niftiImageIOForReferenceOfResultingImage);
 	}
 }
 
 void makeNiiSegmMapFromVectorXsOfLabelsAndSave(std::string folderForThePatientToSaveTheResultsIn,
-											std::string stringWithThePrefixOfTheFilenameToSaveResultingSegmMap,
-											VectorXs & map1, //first row is the background class.
-											int * sizeOfImages, 
-											InputImageType::Pointer imgOneOfModsItkTypeForReferenceOfResultingImage,
-											ImageIOType::Pointer niftiImageIOForReferenceOfResultingImage) {
+std::string stringWithThePrefixOfTheFilenameToSaveResultingSegmMap,
+VectorXs & map1, //first row is the background class.
+int * sizeOfImages, 
+InputImageType::Pointer imgOneOfModsItkTypeForReferenceOfResultingImage,
+ImageIOType::Pointer niftiImageIOForReferenceOfResultingImage) {
 												
 	int	numberOfVoxelsInImage = sizeOfImages[0]*sizeOfImages[1]*sizeOfImages[2];
 
@@ -188,9 +188,9 @@ void makeNiiSegmMapFromVectorXsOfLabelsAndSave(std::string folderForThePatientTo
 		
 	//now save it.
 	std::string niiFullFilepathname = folderForThePatientToSaveTheResultsIn + "/" + 
-								stringWithThePrefixOfTheFilenameToSaveResultingSegmMap + ".nii.gz";
+stringWithThePrefixOfTheFilenameToSaveResultingSegmMap + ".nii.gz";
 	saveNiiImageItk( niiFullFilepathname, imgOneOfModsItkTypeForReferenceOfResultingImage , 
-											niftiImageIOForReferenceOfResultingImage);
+niftiImageIOForReferenceOfResultingImage);
 	
 }
 											
@@ -207,12 +207,9 @@ float transFTo0255(float f, float minIntensity, float maxIntensity) {
 
 // Loads a nii and make the matrix that the rest of the code needs.
 unsigned char * readNiiModalitiesOfPatientToNeededFormat( vectorOfStringsType patientModalitiesFullPathNames,
-															int numModalities,
-															int * sizeOfImages,
-															float minIntensity,
-															float maxIntensity,
-											InputImageType::Pointer & imgOneOfModsItkTypeForReferenceOfResultingImage,
-													ImageIOType::Pointer & niftiImageIOForReferenceOfResultingImage) {
+int numModalities, int * sizeOfImages, float minIntensity, float maxIntensity,
+InputImageType::Pointer & imgOneOfModsItkTypeForReferenceOfResultingImage,
+ImageIOType::Pointer & niftiImageIOForReferenceOfResultingImage) {
     std::vector<InputImageType::Pointer> vectorWithAllModalityImagesItkTypeForThisPatient;
     
 	for (int modality_i = 0 ; modality_i < numModalities ; modality_i ++) {
@@ -263,7 +260,7 @@ unsigned char * readNiiModalitiesOfPatientToNeededFormat( vectorOfStringsType pa
 	InputImagePixelType targetPixel_val;
 	
 	for (int pixelIndexInResultingArray_i = 0 ; pixelIndexInResultingArray_i < numberOfVoxelsInImageMultipliedByModalities; 
-																						pixelIndexInResultingArray_i++) {
+		pixelIndexInResultingArray_i++) {
         //Calculate the coordinates of the voxel that I want to touch, in the actual images.
         //these are all indeces. Eg actualModality_i = 1 corresponds to the second available modality.
 		int actualR=-1, actualC=-1, actualZ=-1, actualModality_i=-1; 
@@ -272,7 +269,8 @@ unsigned char * readNiiModalitiesOfPatientToNeededFormat( vectorOfStringsType pa
 		actualModality_i = pixelIndexInResultingArray_i % numModalities ;
 		actualR = (pixelIndexInResultingArray_i / numModalities) % sizeOfImages[0] ;
 		actualC = (pixelIndexInResultingArray_i / ( numModalities * sizeOfImages[0] ) ) % sizeOfImages[1] ;
-		actualZ = (pixelIndexInResultingArray_i / ( numModalities * sizeOfImages[0] * sizeOfImages[1] ) ) % sizeOfImages[2] ;
+actualZ = (pixelIndexInResultingArray_i / 
+( numModalities * sizeOfImages[0] * sizeOfImages[1] ) ) % sizeOfImages[2] ;
 		
 		index_img[0] = actualR;
 		index_img[1] = actualC;
@@ -302,13 +300,13 @@ unsigned char * readNiiModalitiesOfPatientToNeededFormat( vectorOfStringsType pa
 
 //Loads the nii with the unary potentials and makes a matrix that the rest of the original code needs.
 MatrixXf readNiiProbMapsOfPatientAndMakeUnaryEnergyMatrix( vectorOfStringsType patientProbabilityMapsFullPathNames, 
-															int numberOfForegroundClasses, int * sizeOfImages) {
+int numberOfForegroundClasses, int * sizeOfImages) {
     std::vector<InputImageType::Pointer> vectorWithAllProbabilityImagesItkTypeForThisPatient;
 
     for (int class_i = 0 ; class_i < numberOfForegroundClasses ; class_i ++) {
 		ImageIOType::Pointer niftiImageIO = ImageIOType::New();
         InputImageType::Pointer inputImageFromItk = 
-        								loadNiiImageItk( patientProbabilityMapsFullPathNames[class_i], niftiImageIO );
+        		loadNiiImageItk( patientProbabilityMapsFullPathNames[class_i], niftiImageIO );
         vectorWithAllProbabilityImagesItkTypeForThisPatient.push_back(inputImageFromItk);
         //Lets get the size of the image and check that is correct with what is given as configuration:
         typedef InputImageType::SizeType InputImageSize;
@@ -461,7 +459,7 @@ void addPairwiseBilateralToCrfForCorrespondingNumberOfModalities( DenseCRF3D & c
 										parametersOfRun.BilateralZStd,
 										parametersOfRun.BilateralModsStds[0],
 										arrayWithMyImWithAllModalities,
-										new PottsCompatibility( parametersOfRun.BilateralW ) );
+new PottsCompatibility( parametersOfRun.BilateralW ) );
 	} else if (parametersOfRun.numberOfModalities==2) {
 		std::cout<<"Using addPairwiseBilateral for 2 Modalities\n";
 		crf3d.addPairwiseBilateral2Mod( parametersOfRun.BilateralRStd,
@@ -470,7 +468,7 @@ void addPairwiseBilateralToCrfForCorrespondingNumberOfModalities( DenseCRF3D & c
 										parametersOfRun.BilateralModsStds[0],
 										parametersOfRun.BilateralModsStds[1],
 										arrayWithMyImWithAllModalities,
-										new PottsCompatibility( parametersOfRun.BilateralW ) );
+new PottsCompatibility( parametersOfRun.BilateralW ) );
 	} else if (parametersOfRun.numberOfModalities==3) {
 		std::cout<<"Using addPairwiseBilateral for 3 Modalities\n";
 		crf3d.addPairwiseBilateral3Mod( parametersOfRun.BilateralRStd,
@@ -480,7 +478,7 @@ void addPairwiseBilateralToCrfForCorrespondingNumberOfModalities( DenseCRF3D & c
 										parametersOfRun.BilateralModsStds[1],
 										parametersOfRun.BilateralModsStds[2],
 										arrayWithMyImWithAllModalities,
-										new PottsCompatibility( parametersOfRun.BilateralW ) );	
+new PottsCompatibility( parametersOfRun.BilateralW ) );	
 	} else if (parametersOfRun.numberOfModalities==4) {
 		std::cout<<"Using addPairwiseBilateral for 4 Modalities\n";
 		crf3d.addPairwiseBilateral4Mod( parametersOfRun.BilateralRStd,
@@ -491,7 +489,7 @@ void addPairwiseBilateralToCrfForCorrespondingNumberOfModalities( DenseCRF3D & c
 										parametersOfRun.BilateralModsStds[2],
 										parametersOfRun.BilateralModsStds[3],
 										arrayWithMyImWithAllModalities,
-										new PottsCompatibility( parametersOfRun.BilateralW ) );
+new PottsCompatibility( parametersOfRun.BilateralW ) );
 	} else if (parametersOfRun.numberOfModalities==5) {
 		std::cout<<"Using addPairwiseBilateral for 5 Modalities\n";
 		crf3d.addPairwiseBilateral5Mod( parametersOfRun.BilateralRStd,
@@ -503,7 +501,7 @@ void addPairwiseBilateralToCrfForCorrespondingNumberOfModalities( DenseCRF3D & c
 										parametersOfRun.BilateralModsStds[3],
 										parametersOfRun.BilateralModsStds[4],
 										arrayWithMyImWithAllModalities,
-										new PottsCompatibility( parametersOfRun.BilateralW ) );
+new PottsCompatibility( parametersOfRun.BilateralW ) );
 	}
 									
 }
@@ -516,7 +514,7 @@ void addPairwiseBilateralToCrfForCorrespondingNumberOfModalities( DenseCRF3D & c
 void parseArgs(
 			vectorOfStringsType & vectorWithArgs,
 			/*
-			//if you dont pass this by reference, it creates a copy of the vector and the contents that are added here \
+//if you dont pass this by reference, it creates a copy of the vector and the contents that are added here \
 			are not propagated to the back vector!
 			*/
 			vectorOfStringsType & vectorWithAllModalitiesPaths, 
@@ -542,7 +540,7 @@ void parseArgs(
 	for (int arg_i=0; arg_i < vectorWithArgs.size() ; arg_i++) {
 		
 		if (vectorWithArgs[arg_i].compare("\n") == 0 || vectorWithArgs[arg_i].compare("") == 0 
-															|| vectorWithArgs[arg_i][0]== '#') {
+|| vectorWithArgs[arg_i][0]== '#') {
 			//empty line or comment, continue with next line.
 			continue;
 		}
@@ -569,18 +567,18 @@ void parseArgs(
 			for (int mod_i=0 ; mod_i < numberOfModalities; mod_i++) {
 				arg_i++;
 				if (patientMainFolder == "placeholder" || patientMainFolder == "shouldHaveBeenReadAlready") {
-					//Option -patientFolder with the main folder of a patient was not provided. In this case, \
+		//Option -patientFolder with the main folder of a patient was not provided. In this case, \
 					//expect to read full-filenamePaths of each modality and probability map.
 					vectorWithAllModalitiesPaths.push_back(vectorWithArgs[arg_i]);
 					patientMainFolder = "shouldHaveBeenReadAlready";
 				}
 				else {
-					//Option -patientFolder with the main folder of a patient was previously provided. In this case, \
-					// expect to read only filenames of modalities and prob-maps, and look for them in the main patient-folder.
-					vectorWithAllModalitiesPaths.push_back(patientMainFolder + "/" + vectorWithArgs[arg_i]);
+//Option -patientFolder with the main folder of a patient was previously provided. In this case, \
+// expect to read only filenames of modalities and prob-maps, and look for them in the main patient-folder.
+vectorWithAllModalitiesPaths.push_back(patientMainFolder + "/" + vectorWithArgs[arg_i]);
 				}
 				std::cout << "Parsed Parameter: the full filename+path for the input Modality-" << mod_i << 
-										" was parsed to be: " << vectorWithAllModalitiesPaths.back() << "\n";
+" was parsed to be: " << vectorWithAllModalitiesPaths.back() << "\n";
 
 			}
 			parametersOfRun.setNumberOfModalitiesAndInitialiseBilateralOfModalities(numberOfModalities);
@@ -593,26 +591,26 @@ void parseArgs(
 			for (int class_i=0 ; class_i < numberOfForegroundClasses; class_i++) {
 				arg_i++;
 				if (patientMainFolder == "placeholder" || patientMainFolder == "shouldHaveBeenReadAlready") {
-					//Option -patientFolder with the main folder of a patient was not provided. In this case, \
-					// expect to read full-filenamePaths of each modality and probability map.
+//Option -patientFolder with the main folder of a patient was not provided. In this case, \
+// expect to read full-filenamePaths of each modality and probability map.
 					vectorWithAllProbabilityMapsPaths.push_back(vectorWithArgs[arg_i]);
 					patientMainFolder = "shouldHaveBeenReadAlready";
 				}
 				else {
-					//Option -patientFolder with the main folder of a patient was previously provided. In this case, \
-					// expect to read only filenames of modalities and prob-maps, and look for them in the main patient-folder.
-					vectorWithAllProbabilityMapsPaths.push_back(patientMainFolder + "/" + vectorWithArgs[arg_i]);
+//Option -patientFolder with the main folder of a patient was previously provided. In this case, \
+// expect to read only filenames of modalities and prob-maps, and look for them in the main patient-folder.
+vectorWithAllProbabilityMapsPaths.push_back(patientMainFolder + "/" + vectorWithArgs[arg_i]);
 				}
-				std::cout << "Parsed Parameter: the full filename+path for the input Probability-Map for Class-" << 
-								class_i << " was parsed to be: " << vectorWithAllProbabilityMapsPaths.back() << "\n";
+std::cout << "Parsed Parameter: the full filename+path for the input Probability-Map for Class-" << 
+	class_i << " was parsed to be: " << vectorWithAllProbabilityMapsPaths.back() << "\n";
 			}
 		}
 		else if (vectorWithArgs[arg_i].compare("-imageDimensions") == 0) {
-			//First should be given 3 if 3D or 2 if 2D image, followed by the size of the image in the X-Y(-Z) direction. 
+//First should be given 3 if 3D or 2 if 2D image, followed by the size of the image in the X-Y(-Z) direction. 
 			arg_i++;
 			numberOfDimensions = atoi(vectorWithArgs[arg_i].c_str());
 			std::cout << "Parsed Parameter: The image was given to be of : " << numberOfDimensions <<
-									" Dimensions. The size of each dimension (eg R-C-Z) was parsed: ";
+" Dimensions. The size of each dimension (eg R-C-Z) was parsed: ";
 			for (int dim_i=0 ; dim_i < numberOfDimensions; dim_i++) {
 				arg_i++;
 				sizeOfImages[dim_i] = atoi(vectorWithArgs[arg_i].c_str());
@@ -621,7 +619,7 @@ void parseArgs(
 			std::cout << "\n";
 		}
 		else if (vectorWithArgs[arg_i].compare("-minMaxIntensities") == 0) {
-			//First should be given 3 if 3D or 2 if 2D image, followed by the size of the image in the X-Y(-Z) direction. 
+//First should be given 3 if 3D or 2 if 2D image, followed by the size of the image in the X-Y(-Z) direction. 
 			minIntensity = atof(vectorWithArgs[arg_i+1].c_str());
 			maxIntensity = atof(vectorWithArgs[arg_i+2].c_str());
 			arg_i += 2;
@@ -640,13 +638,13 @@ void parseArgs(
 			arg_i++;
 			stringWithThePrefixOfTheFilenameToSaveResultingSegmMap = vectorWithArgs[arg_i];
 			std::cout << "Parsed Parameter: The segmentation map will be saved with the filename: " << 
-										stringWithThePrefixOfTheFilenameToSaveResultingSegmMap << "\n";
+stringWithThePrefixOfTheFilenameToSaveResultingSegmMap << "\n";
 		}
 		else if (vectorWithArgs[arg_i].compare("-prefixForOutputProbabilityMaps") == 0) {
 			arg_i++;
 			stringWithThePrefixOfTheFilenameToSaveResultingProbMaps = vectorWithArgs[arg_i];
 			std::cout << "Parsed Parameter: The resulting probability maps for each class will be saved with the prefix: " << 
-														stringWithThePrefixOfTheFilenameToSaveResultingProbMaps << "\n";
+stringWithThePrefixOfTheFilenameToSaveResultingProbMaps << "\n";
 		}
 		//NOW THE PARAMETERS OF THE CRF:
 		else if (vectorWithArgs[arg_i].compare("-pRCZandW") == 0) {
@@ -658,10 +656,10 @@ void parseArgs(
 			arg_i += 4;
 			std::cout << "Parsed Parameter: Positional-only Stds for R-C-Z and Positional-only W parsed: " << 
 				parametersOfRun.PosRStd <<
-				" "<< parametersOfRun.PosCStd << " " << parametersOfRun.PosZStd << " " << parametersOfRun.PosW << "\n";
+" "<< parametersOfRun.PosCStd << " " << parametersOfRun.PosZStd << " " << parametersOfRun.PosW << "\n";
 		}
 		else if (vectorWithArgs[arg_i].compare("-bRCZandW") == 0) {
-			// BilateralRStd, BilateralCStd, BilateralZStd, ( BilateralMod1Std, BilateralMod2Std, ... ), BilateralW
+// BilateralRStd, BilateralCStd, BilateralZStd, ( BilateralMod1Std, BilateralMod2Std, ... ), BilateralW
 			parametersOfRun.BilateralRStd = atof(vectorWithArgs[arg_i+1].c_str());
 			parametersOfRun.BilateralCStd = atof(vectorWithArgs[arg_i+2].c_str());
 			parametersOfRun.BilateralZStd = atof(vectorWithArgs[arg_i+3].c_str());
@@ -685,11 +683,11 @@ void parseArgs(
 			// Number of max iterations to apply the CRF.
 			parametersOfRun.MaxIterations = atoi(vectorWithArgs[arg_i+1].c_str());
 			arg_i+=1;
-			std::cout << "Parsed Parameter: The max number of iterations that the CRF will be applied was parsed to be: " <<
+std::cout << "Parsed Parameter: The max number of iterations that the CRF will be applied was parsed to be: " <<
 			 parametersOfRun.MaxIterations << "\n";
 		}
 		else {
-			std::cout<<"ERROR: Problem when parsing the dense_inference input arg! Unknown option given! Exiting!\n";
+std::cout<<"ERROR: Problem when parsing the dense_inference input arg! Unknown option given! Exiting!\n";
 			exit(1);
 		}
 		
@@ -740,7 +738,7 @@ int main( int argc, char* argv[]){
 	// These variables should be given by the user the corresponding min/max values of the range in their images.
 	// Values below or above these limits will be set to the boundary values. 
 	// -3 and +3 are the values that were used in our work, Kamnitsas et al, \
-	// "Multi-Scale 3D Convolutional Neural Networks for Lesion Segmentation in Brain MRI", winning submission to ISLES'15,
+// "Multi-Scale 3D Convolutional Neural Networks for Lesion Segmentation in Brain MRI", winning submission to ISLES'15,
 	// ...where the intensities of each channel were normalised to 0-mean, 1-std.
 	float minIntensity = -3, maxIntensity = +3; 
 	
@@ -798,7 +796,7 @@ int main( int argc, char* argv[]){
 
     std::cout << "********** Loading the probability maps and creating the unary potential matrix... **********\n";
     MatrixXf myUnary = readNiiProbMapsOfPatientAndMakeUnaryEnergyMatrix(vectorWithAllProbabilityMapsPaths, 
-    															numberOfForegroundClasses, sizeOfImages);
+numberOfForegroundClasses, sizeOfImages);
 
     DenseCRF3D crf3d(sizeOfImages[0], sizeOfImages[1], sizeOfImages[2], numberOfForegroundClasses+1);
 
@@ -807,7 +805,7 @@ int main( int argc, char* argv[]){
     crf3d.setUnaryEnergy( myUnary );
 
     crf3d.addPairwiseGaussian( parametersOfRun.PosRStd , parametersOfRun.PosCStd, parametersOfRun.PosZStd, 
-    														new PottsCompatibility( parametersOfRun.PosW ) );
+    new PottsCompatibility( parametersOfRun.PosW ) );
 
 	addPairwiseBilateralToCrfForCorrespondingNumberOfModalities( crf3d, parametersOfRun, arrayWithMyImWithAllModalities);
 	
@@ -818,21 +816,19 @@ int main( int argc, char* argv[]){
     MatrixXf probMapsMatrix = crf3d.inference(parametersOfRun.MaxIterations);
     //Save the results
     makeNiiProbMapFromMatrixXfOfProbsAndSave(stringWithTheFolderForThePatientToSaveTheResultsIn,
-     										stringWithThePrefixOfTheFilenameToSaveResultingProbMaps,
-											probMapsMatrix,
-											numberOfForegroundClasses,
-											sizeOfImages,
-											imgOneOfModsItkTypeForReferenceOfResultingImage,
-											niftiImageIOForReferenceOfResultingImage);
+ stringWithThePrefixOfTheFilenameToSaveResultingProbMaps,
+probMapsMatrix,numberOfForegroundClasses,sizeOfImages,
+imgOneOfModsItkTypeForReferenceOfResultingImage,
+niftiImageIOForReferenceOfResultingImage);
 											
 	VectorXs segmentationVector = crf3d.currentMap(probMapsMatrix);
 	
 	makeNiiSegmMapFromVectorXsOfLabelsAndSave(stringWithTheFolderForThePatientToSaveTheResultsIn,
-											stringWithThePrefixOfTheFilenameToSaveResultingSegmMap,
-											segmentationVector, //first row is the background class.
-											sizeOfImages, 
-											imgOneOfModsItkTypeForReferenceOfResultingImage,
-											niftiImageIOForReferenceOfResultingImage);
+stringWithThePrefixOfTheFilenameToSaveResultingSegmMap,
+segmentationVector, //first row is the background class.
+sizeOfImages, 
+imgOneOfModsItkTypeForReferenceOfResultingImage,
+niftiImageIOForReferenceOfResultingImage);
 	
     delete[] arrayWithMyImWithAllModalities;
     std::cout << "++++++++++++++++++++++++++ Done. ++++++++++++++++++++++++++\n";

@@ -88,7 +88,7 @@ protected:
     }
 public:
     explicit HashTable( int key_size, int n_elements ) : key_size_ ( key_size ), filled_(0), capacity_(2*n_elements), 
-    													keys_((capacity_/2+10)*key_size_), table_(2*n_elements,-1) {
+keys_((capacity_/2+10)*key_size_), table_(2*n_elements,-1) {
     }
     int size() const {
         return filled_;
