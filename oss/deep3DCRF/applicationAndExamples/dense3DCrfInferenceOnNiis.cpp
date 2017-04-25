@@ -587,7 +587,7 @@ vectorWithAllModalitiesPaths.push_back(patientMainFolder + "/" + vectorWithArgs[
 			arg_i++;
 			numberOfForegroundClasses = atoi(vectorWithArgs[arg_i].c_str());
 			std::cout << "Parsed Parameter: The number of foreground classes was parsed to be: " << 
-																numberOfForegroundClasses << "\n";
+			numberOfForegroundClasses << "\n";
 			for (int class_i=0 ; class_i < numberOfForegroundClasses; class_i++) {
 				arg_i++;
 				if (patientMainFolder == "placeholder" || patientMainFolder == "shouldHaveBeenReadAlready") {
@@ -643,7 +643,8 @@ stringWithThePrefixOfTheFilenameToSaveResultingSegmMap << "\n";
 		else if (vectorWithArgs[arg_i].compare("-prefixForOutputProbabilityMaps") == 0) {
 			arg_i++;
 			stringWithThePrefixOfTheFilenameToSaveResultingProbMaps = vectorWithArgs[arg_i];
-			std::cout << "Parsed Parameter: The resulting probability maps for each class will be saved with the prefix: " << 
+			std::cout << "Parsed Parameter: The resulting probability maps for each class will be 
+				saved with the prefix: " << 
 stringWithThePrefixOfTheFilenameToSaveResultingProbMaps << "\n";
 		}
 		//NOW THE PARAMETERS OF THE CRF:
@@ -786,12 +787,12 @@ int main( int argc, char* argv[]){
 	ImageIOType::Pointer niftiImageIOForReferenceOfResultingImage;// = ImageIOType::New();
     unsigned char * arrayWithMyImWithAllModalities = 
     						readNiiModalitiesOfPatientToNeededFormat( vectorWithAllModalitiesPaths, 
-																				numberOfModalities,
-																					sizeOfImages,
-																					minIntensity,
-																					maxIntensity,
-																		imgOneOfModsItkTypeForReferenceOfResultingImage,
-																			niftiImageIOForReferenceOfResultingImage );
+numberOfModalities,
+sizeOfImages,
+minIntensity,
+maxIntensity,
+imgOneOfModsItkTypeForReferenceOfResultingImage,
+niftiImageIOForReferenceOfResultingImage );
     std::cout << "...Done with Image modalities for patient..!\n";
 
     std::cout << "********** Loading the probability maps and creating the unary potential matrix... **********\n";

@@ -61,7 +61,7 @@ DenseCRF3D::~DenseCRF3D() {
 /////  Pairwise Potentials  /////
 /////////////////////////////////
 void DenseCRF::addPairwiseEnergy (const MatrixXf & features, LabelCompatibility * function, KernelType kernel_type, 
-																			NormalizationType normalization_type) {
+	NormalizationType normalization_type) {
 	assert( features.cols() == N_ );
     PairwisePotential * pp = new PairwisePotential( features, function, kernel_type, normalization_type );
     addPairwiseEnergy( pp );
@@ -71,7 +71,7 @@ void DenseCRF::addPairwiseEnergy ( PairwisePotential* potential ){
 	pairwise_.push_back( potential );
 }
 void DenseCRF2D::addPairwiseGaussian ( float sx, float sy, LabelCompatibility * function, KernelType kernel_type, 
-																		NormalizationType normalization_type ) {
+	NormalizationType normalization_type ) {
 	MatrixXf feature( 2, N_ );
     for( int j=0; j<H_; j++ )
 		for( int i=0; i<W_; i++ ){
