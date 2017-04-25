@@ -216,7 +216,7 @@ ImageIOType::Pointer & niftiImageIOForReferenceOfResultingImage) {
 		std::cout<<"Loading modality: " <<patientModalitiesFullPathNames[modality_i]<<"\n";
 		ImageIOType::Pointer niftiImageIO = ImageIOType::New();
 		InputImageType::Pointer inputImageFromItk = loadNiiImageItk( patientModalitiesFullPathNames[modality_i], 
-																								niftiImageIO);
+niftiImageIO);
 		
 		vectorWithAllModalityImagesItkTypeForThisPatient.push_back(inputImageFromItk);
 	    //Lets get the size of the image and check that is correct with what is given as configuration:
