@@ -166,7 +166,7 @@ void DenseCRF3D::addPairwiseBilateral4Mod ( float sx, float sy, float sz, float 
 }
 void DenseCRF3D::addPairwiseBilateral5Mod ( float sx, float sy, float sz, float sMod1, float sMod2, float sMod3, 
 float sMod4, float sMod5, const unsigned char* im, LabelCompatibility * function, KernelType kernel_type, 
-																		NormalizationType normalization_type ) {
+NormalizationType normalization_type ) {
     MatrixXf feature( 8, N_ );
     for( int k=0; k<Z_; k++ )
         for( int j=0; j<H_; j++ )

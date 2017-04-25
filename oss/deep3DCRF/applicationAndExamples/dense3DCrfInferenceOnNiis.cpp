@@ -344,7 +344,7 @@ int numberOfForegroundClasses, int * sizeOfImages) {
 
 
     for (int pixelIndexInResultingArray_i = 0 ; pixelIndexInResultingArray_i < numberOfVoxelsInImage ; 
-    																pixelIndexInResultingArray_i++) {
+pixelIndexInResultingArray_i++) {
         //Calculate the coordinates of the voxel that I want to touch, in the actual images.
         //these are all indeces. Eg actualModality_i = 1 corresponds to the second available modality.
         int actualR=-1, actualC=-1, actualZ=-1; 
@@ -625,7 +625,7 @@ std::cout << "Parsed Parameter: the full filename+path for the input Probability
 			arg_i += 2;
 			std::cout << "Parsed Parameter: The min and max intensities that will be processed from the channels 
 			(modalities should be scaled at the same range) were parsed to be: [" << minIntensity << "," << 
-																						maxIntensity << "]\n";
+			maxIntensity << "]\n";
 		}
 		else if (vectorWithArgs[arg_i].compare("-outputFolder") == 0) {
 			//Output folder, where the results of the inference will be placed. The folder should already exist.
@@ -772,7 +772,7 @@ int main( int argc, char* argv[]){
 	std::cout << "********** Parameters that will be used for this run: **********\n";
 	
 	std::cout<<"Parameters: numberOfModalities="<<numberOfModalities<<", numberOfForegroundClasses="<<
-																		numberOfForegroundClasses<<"\n";
+	numberOfForegroundClasses<<"\n";
 	std::cout<<"Parameters: sizeOfImages= ["<<sizeOfImages[0]<<", "<<sizeOfImages[1]<<", "<<sizeOfImages[2]<<"]\n";
 	std::cout<<"Parameters: min Intensity value in the channels=" << minIntensity << 
 						", max intensity value in the channels=" << maxIntensity <<
