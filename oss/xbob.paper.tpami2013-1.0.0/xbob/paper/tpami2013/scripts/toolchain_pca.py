@@ -34,19 +34,26 @@ def main():
   parser.add_argument('-g', '--group', metavar='STR', type=str, nargs='+',
       dest='group', default=['dev','eval'], help='Database group (\'dev\' or \'eval\') for which to enroll models and compute scores.')
   parser.add_argument('--n-outputs', metavar='INT', type=int,
-     dest='n_outputs', default=None, help='The rank of the PCA subspace. It will overwrite the value in the configuration file if any. Default is the value in the configuration file')
+     dest='n_outputs', default=None, help='The rank of the PCA subspace. \
+It will overwrite the value in the configuration file if any. Default is the value in the configuration file')
   parser.add_argument('--output-dir', metavar='STR', type=str,
       dest='output_dir', default='output', help='The base output directory for everything (models, scores, etc.).')
   parser.add_argument('--features-dir', metavar='STR', type=str,
-      dest='features_dir', default=None, help='The directory where the features are stored. It will overwrite the value in the configuration file if any. Default is the value \'lbph_features_dir\' in the configuration file, that is prepended by the given output directory and the protocol.')
+      dest='features_dir', default=None, help='The directory where the features are stored.\
+ It will overwrite the value in the configuration file if any. \
+Default is the value \'lbph_features_dir\' in the configuration file, that is prepended by the given output directory and the protocol.')
   parser.add_argument('--pca-dir', metavar='FILE', type=str,
-      dest='pca_dir', default='pca_euclidean', help='The relative directory of the PCA algorithm that will contain the models and the scores. It is appended to the given output directory and the protocol.')
+      dest='pca_dir', default='pca_euclidean', help='The relative directory of the PCA algorithm that \
+will contain the models and the scores. It is appended to the given output directory and the protocol.')
   parser.add_argument('--pca-model-filename', metavar='STR', type=str,
-      dest='pca_model_filename', default=None, help='The (pca) filename of the PCA model. It will overwrite the value in the configuration file if any. Default is the value in the configuration file. It is then appended to the given output directory, the protocol and the pca directory.')
+      dest='pca_model_filename', default=None, help='The (pca) filename of the PCA model.\
+ It will overwrite the value in the configuration file if any. Default is the value in the configuration file. \
+It is then appended to the given output directory, the protocol and the pca directory.')
   parser.add_argument('--distance', metavar='STR', type=str,
       dest='distance', default='euclidean', help='The distance to use, when computing scores.')
   parser.add_argument('-p', '--protocol', metavar='STR', type=str,
-      dest='protocol', default=None, help='The protocol of the database to consider. It will overwrite the value in the configuration file if any. Default is the value in the configuration file.')
+      dest='protocol', default=None, help='The protocol of the database to consider.\
+ It will overwrite the value in the configuration file if any. Default is the value in the configuration file.')
   parser.add_argument('-f', '--force', dest='force', action='store_true',
       default=False, help='Force to erase former data if already exist')
   parser.add_argument('--grid', dest='grid', action='store_true',
@@ -89,7 +96,8 @@ def main():
   if args.force: cmd_pcatrain.append('--force')
   if args.grid: 
     cmd_pcatrain.append('--grid')
-    job_pcatrain = utils.submit(jm, cmd_pcatrain, dependencies=[], array=None, queue='q1d', mem='8G', hostname='!cicatrix')
+    job_pcatrain = utils.submit(jm, cmd_pcatrain, dependencies=[], \
+array=None, queue='q1d', mem='8G', hostname='!cicatrix')
     print('submitted: %s' % job_pcatrain)
   else:
     print('Running PCA training...')
@@ -114,7 +122,8 @@ def main():
     # Number of array jobs
     n_array_jobs = int(math.ceil(len(inputs_list) / float(config.n_max_files_per_job)))  
     cmd_pcaproject.append('--grid')
-    job_pcaproject = utils.submit(jm, cmd_pcaproject, dependencies=[job_pcatrain.id()], array=(1,n_array_jobs,1), queue='q1d', mem='2G', hostname='!cicatrix')
+    job_pcaproject = utils.submit(jm, cmd_pcaproject, dependencies=[job_pcatrain.id()], \
+array=(1,n_array_jobs,1), queue='q1d', mem='2G', hostname='!cicatrix')
     print('submitted: %s' % job_pcaproject)
   else:
     print('Running PCA projection...')
@@ -137,7 +146,8 @@ def main():
     if args.force: cmd_enroll.append('--force')
     if args.grid: 
       cmd_enroll.append('--grid')
-      job_enroll_int = utils.submit(jm, cmd_enroll, dependencies=[job_pcaproject.id()], array=None, queue='q1d', mem='2G', hostname='!cicatrix')
+      job_enroll_int = utils.submit(jm, cmd_enroll, dependencies=[job_pcaproject.id()], \
+array=None, queue='q1d', mem='2G', hostname='!cicatrix')
       job_enroll.append(job_enroll_int.id())
       print('submitted: %s' % job_enroll_int)
     else:
@@ -150,7 +160,8 @@ def main():
     n_array_jobs = 0
     model_ids = sorted(config.db.model_ids(protocol=protocol, groups=group))
     for model_id in model_ids:
-      n_probes_for_model = len(config.db.objects(groups=group, protocol=protocol, purposes='probe', model_ids=(model_id,)))
+      n_probes_for_model = len(config.db.objects(groups=group, protocol=protocol, \
+purposes='probe', model_ids=(model_id,)))
       n_splits_for_model = int(math.ceil(n_probes_for_model / float(config.n_max_probes_per_job)))
       n_array_jobs += n_splits_for_model
     cmd_scores = [
@@ -166,7 +177,8 @@ def main():
     if args.grid: 
       cmd_scores.append('--grid')
       deps = job_enroll
-      job_scores_int = utils.submit(jm, cmd_scores, dependencies=deps, array=(1,n_array_jobs,1), queue='q1d', mem='3G', hostname='!cicatrix')
+      job_scores_int = utils.submit(jm, cmd_scores, dependencies=deps, array=(1,n_array_jobs,1), \
+queue='q1d', mem='3G', hostname='!cicatrix')
       job_scores.append(job_scores_int.id())
       print('submitted: %s' % job_scores_int)
     else:

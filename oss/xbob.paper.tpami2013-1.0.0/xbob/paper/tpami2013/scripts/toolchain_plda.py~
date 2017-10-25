@@ -33,32 +33,23 @@ def main():
   parser.add_argument('-c', '--config-file', metavar='FILE', type=str,
       dest='config_file', default='xbob/paper/tpami2013/config_multipie.py', help='Filename of the configuration file to use to run the script on the grid (defaults to "%(default)s")')
   parser.add_argument('--nf', metavar='INT', type=int,
-     dest='nf', default=0, help='The dimensionality of the F subspace. \
-It will overwrite the value in the configuration file if any. Default is the value in the configuration file')
+     dest='nf', default=0, help='The dimensionality of the F subspace. It will overwrite the value in the configuration file if any. Default is the value in the configuration file')
   parser.add_argument('--ng', metavar='INT', type=int,
-     dest='ng', default=0, help='The dimensionality of the G subspace. \
-It will overwrite the value in the configuration file if any. Default is the value in the configuration file')
+     dest='ng', default=0, help='The dimensionality of the G subspace. It will overwrite the value in the configuration file if any. Default is the value in the configuration file')
   parser.add_argument('--world-nshots', metavar='INT', type=int,
-     dest='world_nshots', default=0, help='The maximum number of samples per identity to use, \
-to train the PLDA model. Default is to use all possible samples')
+     dest='world_nshots', default=0, help='The maximum number of samples per identity to use, to train the PLDA model. Default is to use all possible samples')
   parser.add_argument('--output-dir', metavar='STR', type=str,
       dest='output_dir', default='output', help='The base output directory for everything (models, scores, etc.).')
   parser.add_argument('--features-dir', metavar='STR', type=str,
-      dest='features_dir', default=None, help='The directory where the features are stored. \
-It will overwrite the value in the configuration file if any. \
-Default is the value \'lbph_features_dir\' in the configuration file, that is prepended by the given output directory and the protocol.')
+      dest='features_dir', default=None, help='The directory where the features are stored. It will overwrite the value in the configuration file if any. Default is the value \'lbph_features_dir\' in the configuration file, that is prepended by the given output directory and the protocol.')
   parser.add_argument('--plda-dir', metavar='STR', type=str,
-      dest='plda_dir', default=None, help='The subdirectory where the PLDA data are stored. \
-It will overwrite the value in the configuration file if any. Default is the value in the configuration file. It is appended to the given output directory and the protocol.')
+      dest='plda_dir', default=None, help='The subdirectory where the PLDA data are stored. It will overwrite the value in the configuration file if any. Default is the value in the configuration file. It is appended to the given output directory and the protocol.')
   parser.add_argument('--plda-model-filename', metavar='STR', type=str,
-      dest='plda_model_filename', default=None, help='The (relative) filename of the PLDABase model. \
-It will overwrite the value in the configuration file if any. Default is the value in the configuration file. \
-It is then appended to the given output directory, the protocol and the plda directory.')
+      dest='plda_model_filename', default=None, help='The (relative) filename of the PLDABase model. It will overwrite the value in the configuration file if any. Default is the value in the configuration file. It is then appended to the given output directory, the protocol and the plda directory.')
   parser.add_argument('-g', '--group', metavar='STR', type=str, nargs='+',
       dest='group', default=['dev','eval'], help='Database group (\'dev\' or \'eval\') for which to enroll models and compute scores.')
   parser.add_argument('-p', '--protocol', metavar='STR', type=str,
-      dest='protocol', default=None, help='The protocol of the database to consider. \
-It will overwrite the value in the configuration file if any. Default is the value in the configuration file.')
+      dest='protocol', default=None, help='The protocol of the database to consider. It will overwrite the value in the configuration file if any. Default is the value in the configuration file.')
   parser.add_argument('-f', '--force', dest='force', action='store_true',
       default=False, help='Force to erase former data if already exist')
   parser.add_argument('--grid', dest='grid', action='store_true',
@@ -105,8 +96,7 @@ It will overwrite the value in the configuration file if any. Default is the val
   if args.force: cmd_pldabase.append('--force')
   if args.grid: 
     cmd_pldabase.append('--grid')
-    job_pldabase = utils.submit(jm, cmd_pldabase, dependencies=[], \
-array=None, queue='q1d', mem='4G', hostname='!cicatrix')
+    job_pldabase = utils.submit(jm, cmd_pldabase, dependencies=[], array=None, queue='q1d', mem='4G', hostname='!cicatrix')
     print('submitted: %s' % job_pldabase)
   else:
     print('Running PLDA training...')
@@ -129,8 +119,7 @@ array=None, queue='q1d', mem='4G', hostname='!cicatrix')
     if args.force: cmd_enroll.append('--force')
     if args.grid: 
       cmd_enroll.append('--grid')
-      job_enroll_int = utils.submit(jm, cmd_enroll, dependencies=[job_pldabase.id()],\
- array=None, queue='q1d', mem='2G', hostname='!cicatrix')
+      job_enroll_int = utils.submit(jm, cmd_enroll, dependencies=[job_pldabase.id()], array=None, queue='q1d', mem='2G', hostname='!cicatrix')
       job_enroll.append(job_enroll_int.id())
       print('submitted: %s' % job_enroll_int)
     else:
@@ -143,8 +132,7 @@ array=None, queue='q1d', mem='4G', hostname='!cicatrix')
     n_array_jobs = 0
     model_ids = sorted(config.db.model_ids(protocol=protocol, groups=group))
     for model_id in model_ids:
-      n_probes_for_model = len(config.db.objects(groups=group, protocol=protocol, \
-purposes='probe', model_ids=(model_id,)))
+      n_probes_for_model = len(config.db.objects(groups=group, protocol=protocol, purposes='probe', model_ids=(model_id,)))
       n_splits_for_model = int(math.ceil(n_probes_for_model / float(config.n_max_probes_per_job)))
       n_array_jobs += n_splits_for_model
     cmd_scores = [
@@ -160,8 +148,7 @@ purposes='probe', model_ids=(model_id,)))
     if args.grid: 
       cmd_scores.append('--grid')
       deps = job_enroll
-      job_scores_int = utils.submit(jm, cmd_scores, dependencies=deps, array=(1,n_array_jobs,1), \
-queue='q1d', mem='3G', hostname='!cicatrix')
+      job_scores_int = utils.submit(jm, cmd_scores, dependencies=deps, array=(1,n_array_jobs,1), queue='q1d', mem='3G', hostname='!cicatrix')
       job_scores.append(job_scores_int.id())
       print('submitted: %s' % job_scores_int)
     else:

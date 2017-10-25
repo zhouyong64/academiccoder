@@ -33,25 +33,17 @@ def main():
   parser.add_argument('--output-dir', metavar='FILE', type=str,
       dest='output_dir', default='output', help='The base output directory for everything (models, scores, etc.).')
   parser.add_argument('--features-dir', metavar='STR', type=str,
-      dest='features_dir', default=None, help='The directory where the features are stored.\
- It will overwrite the value in the configuration file if any. \
-Default is the value in the configuration file, that is prepended by the given output directory and the protocol.')
+      dest='features_dir', default=None, help='The directory where the features are stored. It will overwrite the value in the configuration file if any. Default is the value in the configuration file, that is prepended by the given output directory and the protocol.')
   parser.add_argument('--plda-dir', metavar='STR', type=str,
-      dest='plda_dir', default=None, help='The subdirectory where the PLDA data are stored. \
-It will overwrite the value in the configuration file if any. \
-Default is the value in the configuration file. It is appended to the given output directory and the protocol.')
+      dest='plda_dir', default=None, help='The subdirectory where the PLDA data are stored. It will overwrite the value in the configuration file if any. Default is the value in the configuration file. It is appended to the given output directory and the protocol.')
   parser.add_argument('--plda-model-filename', metavar='STR', type=str,
-      dest='plda_model_filename', default=None, help='The (relative) filename of the PLDABase model. \
-It will overwrite the value in the configuration file if any. Default is the value in the configuration file. \
-It is then appended to the given output directory, the protocol and the plda directory.')
+      dest='plda_model_filename', default=None, help='The (relative) filename of the PLDABase model. It will overwrite the value in the configuration file if any. Default is the value in the configuration file. It is then appended to the given output directory, the protocol and the plda directory.')
   parser.add_argument('-p', '--protocol', metavar='STR', type=str,
-      dest='protocol', default=None, help='The protocol of the database to consider. \
-It will overwrite the value in the configuration file if any. Default is the value in the configuration file.')
+      dest='protocol', default=None, help='The protocol of the database to consider. It will overwrite the value in the configuration file if any. Default is the value in the configuration file.')
   parser.add_argument('-f', '--force', dest='force', action='store_true',
       default=False, help='Force to erase former data if already exist')
   parser.add_argument('--grid', dest='grid', action='store_true',
-      default=False, help='If set, assumes it is being run using a parametric grid job. \
-It orders all ids to be processed and picks the one at the position given by ${SGE_TASK_ID}-1')
+      default=False, help='If set, assumes it is being run using a parametric grid job. It orders all ids to be processed and picks the one at the position given by ${SGE_TASK_ID}-1')
   args = parser.parse_args()
 
   # Loads the configuration 
@@ -79,8 +71,7 @@ It orders all ids to be processed and picks the one at the position given by ${S
     found = False
     pos = int(os.environ['SGE_TASK_ID']) - 1
     for model_id in models_ids:
-      n_probes_for_model = len(config.db.objects(groups=args.group, protocol=protocol, \
-purposes='probe', model_ids=(model_id,)))
+      n_probes_for_model = len(config.db.objects(groups=args.group, protocol=protocol, purposes='probe', model_ids=(model_id,)))
       n_splits_for_model = int(math.ceil(n_probes_for_model / float(config.n_max_probes_per_job)))
       if pos < n_splits + n_splits_for_model:
         models_ids = [model_id]
@@ -91,8 +82,7 @@ purposes='probe', model_ids=(model_id,)))
     if found == False:
       raise RuntimeError("Grid request for job %d on a setup with %d jobs" % (pos, n_splits))
 
-  sc_nonorm_filename = os.path.join(args.output_dir, protocol, plda_dir_, \
-config.scores_nonorm_dir, "scores-" + args.group)
+  sc_nonorm_filename = os.path.join(args.output_dir, protocol, plda_dir_, config.scores_nonorm_dir, "scores-" + args.group)
   if args.force:
     print("Removing old scores file '%s'." % sc_nonorm_filename)
     utils.erase_if_exists(sc_nonorm_filename)
@@ -117,8 +107,7 @@ config.scores_nonorm_dir, "scores-" + args.group)
         print("Scores file '%s' already exists." % sc_nonorm_filename)
       else:
         # Gets the probe sample list
-        probe_filenames = sorted(config.db.objects(groups=args.group, protocol=protocol, \
-purposes="probe", model_ids=(model_id,)), key=lambda f: f.path)
+        probe_filenames = sorted(config.db.objects(groups=args.group, protocol=protocol, purposes="probe", model_ids=(model_id,)), key=lambda f: f.path)
         
         # If we are on a grid environment, just keep the required split of samples
         if args.grid:

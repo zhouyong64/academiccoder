@@ -36,13 +36,17 @@ def main():
   parser.add_argument('--output-dir', metavar='STR', type=str,
       dest='output_dir', default='output', help='The base output directory for everything (models, scores, etc.).')
   parser.add_argument('--features-dir', metavar='STR', type=str,
-      dest='features_dir', default=None, help='The directory where the features are stored. It will overwrite the value in the configuration file if any. Default is the value \'lbph_features_dir\' in the configuration file, that is prepended by the given output directory and the protocol.')
+      dest='features_dir', default=None, help='The directory where the features are stored. \
+It will overwrite the value in the configuration file if any. \
+Default is the value \'lbph_features_dir\' in the configuration file, that is prepended by the given output directory and the protocol.')
   parser.add_argument('--lbph-dir', metavar='FILE', type=str,
-      dest='lbph_dir', default='lbph_chisquare', help='The relative directory of the LBPH that will contain the models and the scores. It is appended to the given output directory and the protocol.')
+      dest='lbph_dir', default='lbph_chisquare', help='The relative directory of the LBPH that will contain the models and the scores.\
+ It is appended to the given output directory and the protocol.')
   parser.add_argument('--distance', metavar='STR', type=str,
       dest='distance', default='chi_square', help='The distance to use, when computing scores.')
   parser.add_argument('-p', '--protocol', metavar='STR', type=str,
-      dest='protocol', default=None, help='The protocol of the database to consider. It will overwrite the value in the configuration file if any. Default is the value in the configuration file.')
+      dest='protocol', default=None, help='The protocol of the database to consider. \
+It will overwrite the value in the configuration file if any. Default is the value in the configuration file.')
   parser.add_argument('-f', '--force', dest='force', action='store_true',
       default=False, help='Force to erase former data if already exist')
   parser.add_argument('--grid', dest='grid', action='store_true',
@@ -80,7 +84,8 @@ def main():
     if args.force: cmd_enroll.append('--force')
     if args.grid: 
       cmd_enroll.append('--grid')
-      job_enroll_int = utils.submit(jm, cmd_enroll, dependencies=None, array=None, queue='q1d', mem='2G', hostname='!cicatrix')
+      job_enroll_int = utils.submit(jm, cmd_enroll, dependencies=None, \
+array=None, queue='q1d', mem='2G', hostname='!cicatrix')
       job_enroll.append(job_enroll_int.id())
       print('submitted: %s' % job_enroll_int)
     else:
@@ -93,7 +98,8 @@ def main():
     n_array_jobs = 0
     model_ids = sorted(config.db.model_ids(protocol=protocol, groups=group))
     for model_id in model_ids:
-      n_probes_for_model = len(config.db.objects(groups=group, protocol=protocol, purposes='probe', model_ids=(model_id,)))
+      n_probes_for_model = len(config.db.objects(groups=group, \
+protocol=protocol, purposes='probe', model_ids=(model_id,)))
       n_splits_for_model = int(math.ceil(n_probes_for_model / float(config.n_max_probes_per_job)))
       n_array_jobs += n_splits_for_model
     cmd_scores = [
@@ -109,7 +115,8 @@ def main():
     if args.grid: 
       cmd_scores.append('--grid')
       deps = job_enroll
-      job_scores_int = utils.submit(jm, cmd_scores, dependencies=deps, array=(1,n_array_jobs,1), queue='q1d', mem='3G', hostname='!cicatrix')
+      job_scores_int = utils.submit(jm, cmd_scores, dependencies=deps, \
+array=(1,n_array_jobs,1), queue='q1d', mem='3G', hostname='!cicatrix')
       job_scores.append(job_scores_int.id())
       print('submitted: %s' % job_scores_int)
     else:
