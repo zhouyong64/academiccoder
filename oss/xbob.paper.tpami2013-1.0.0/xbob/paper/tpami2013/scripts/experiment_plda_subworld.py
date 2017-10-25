@@ -30,19 +30,31 @@ def main():
   parser = argparse.ArgumentParser(description=__doc__,
       formatter_class=argparse.RawDescriptionHelpFormatter)
   parser.add_argument('-c', '--config-file', metavar='FILE', type=str,
-      dest='config_file', default='xbob/paper/tpami2013/config_multipie.py', help='Filename of the configuration file to use to run the script on the grid (defaults to "%(default)s")')
+      dest='config_file', default='xbob/paper/tpami2013/config_multipie.py', \
+help='Filename of the configuration file to use to run the script on the grid (defaults to "%(default)s")')
   parser.add_argument('--nf', metavar='INT', type=int,
-     dest='nf', default=0, help='The dimensionality of the F subspace. It will overwrite the value in the configuration file if any. Default is the value in the configuration file')
+     dest='nf', default=0, help='The dimensionality of the F subspace. \
+It will overwrite the value in the configuration file if any. Default is the value in the configuration file')
   parser.add_argument('--ng', metavar='INT', type=int,
-     dest='ng', default=0, help='The dimensionality of the G subspace. It will overwrite the value in the configuration file if any. Default is the value in the configuration file')
+     dest='ng', default=0, help='The dimensionality of the G subspace. \
+It will overwrite the value in the configuration file if any. Default is the value in the configuration file')
   parser.add_argument('--output-dir', metavar='STR', type=str,
       dest='output_dir', default='output', help='The base output directory for everything (models, scores, etc.).')
   parser.add_argument('--features-dir', metavar='STR', type=str,
-      dest='features_dir', default=None, help='The directory where the features are stored. It will overwrite the value in the configuration file if any. Default is the value \'lbph_features_dir\' in the configuration file, that is prepended by the given output directory and the protocol.')
+      dest='features_dir', default=None, help='The directory where the features are stored. \
+It will overwrite the value in the configuration file if any. \
+Default is the value \'lbph_features_dir\' in the configuration file, \
+that is prepended by the given output directory and the protocol.')
   parser.add_argument('--plda-dir', metavar='STR', type=str,
-      dest='plda_dir', default=None, help='The subdirectory where the PLDA data are stored. It will overwrite the value in the configuration file if any. Default is the value in the configuration file. It is appended to the given output directory and the protocol.')
+      dest='plda_dir', default=None, help='The subdirectory where the PLDA data are stored. \
+It will overwrite the value in the configuration file if any. \
+Default is the value in the configuration file. \
+It is appended to the given output directory and the protocol.')
   parser.add_argument('--plda-model-filename', metavar='STR', type=str,
-      dest='plda_model_filename', default=None, help='The (relative) filename of the PLDABase model. It will overwrite the value in the configuration file if any. Default is the value in the configuration file. It is then appended to the given output directory, the protocol and the plda directory.')
+      dest='plda_model_filename', default=None, help='The (relative) filename of the PLDABase model. \
+It will overwrite the value in the configuration file if any. \
+Default is the value in the configuration file. \
+It is then appended to the given output directory, the protocol and the plda directory.')
   parser.add_argument('-f', '--force', dest='force', action='store_true',
       default=False, help='Force to erase former data if already exist')
   parser.add_argument('--grid', dest='grid', action='store_true',

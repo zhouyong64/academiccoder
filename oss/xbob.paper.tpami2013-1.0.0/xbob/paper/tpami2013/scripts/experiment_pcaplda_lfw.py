@@ -29,27 +29,45 @@ def main():
   parser = argparse.ArgumentParser(description=__doc__,
       formatter_class=argparse.RawDescriptionHelpFormatter)
   parser.add_argument('-c', '--config-file', metavar='FILE', type=str,
-      dest='config_file', default='xbob/paper/tpami2013/config_lfw.py', help='Filename of the configuration file to use to run the script on the grid (defaults to "%(default)s")')
+      dest='config_file', default='xbob/paper/tpami2013/config_lfw.py', \
+help='Filename of the configuration file to use to run the script on the grid (defaults to "%(default)s")')
   parser.add_argument('--pca-n-outputs', metavar='INT', type=int,
-     dest='pca_n_outputs', default=None, help='The rank of the PCA subspace. It will overwrite the value in the configuration file if any. Default is the value in the configuration file')
+     dest='pca_n_outputs', default=None, help='The rank of the PCA subspace. \
+It will overwrite the value in the configuration file if any. Default is the value in the configuration file')
   parser.add_argument('--plda-nf', metavar='INT', type=int,
-     dest='plda_nf', default=None, help='The dimensionality of the F subspace. It will overwrite the value in the configuration file if any. Default is the value in the configuration file')
+     dest='plda_nf', default=None, help='The dimensionality of the F subspace. \
+It will overwrite the value in the configuration file if any. Default is the value in the configuration file')
   parser.add_argument('--plda-ng', metavar='INT', type=int,
-     dest='plda_ng', default=None, help='The dimensionality of the G subspace. It will overwrite the value in the configuration file if any. Default is the value in the configuration file')
+     dest='plda_ng', default=None, help='The dimensionality of the G subspace. \
+It will overwrite the value in the configuration file if any. Default is the value in the configuration file')
   parser.add_argument('--output-dir', metavar='STR', type=str,
       dest='output_dir', default='output', help='The base output directory for everything (models, scores, etc.).')
   parser.add_argument('--features-dir', metavar='STR', type=str,
-      dest='features_dir', default=None, help='The directory where the features are stored. It will overwrite the value in the configuration file if any. Default is the value \'sift_features_dir\' in the configuration file, that is prepended by the given output directory and the protocol.')
+      dest='features_dir', default=None, help='The directory where the features are stored. \
+It will overwrite the value in the configuration file if any. \
+Default is the value \'sift_features_dir\' in the configuration file, \
+that is prepended by the given output directory and the protocol.')
   parser.add_argument('--pca-dir', metavar='STR', type=str,
-      dest='pca_dir', default=None, help='The subdirectory where the PCA data are stored. It will overwrite the value in the configuration file if any. Default is the value in the configuration file. It is appended to the given output directory and the protocol.')
+      dest='pca_dir', default=None, help='The subdirectory where the PCA data are stored. \
+It will overwrite the value in the configuration file if any. Default is the value \
+in the configuration file. It is appended to the given output directory and the protocol.')
   parser.add_argument('--pca-model-filename', metavar='STR', type=str,
-      dest='pca_model_filename', default=None, help='The (relative) filename of the PCA model. It will overwrite the value in the configuration file if any. Default is the value in the configuration file. It is then appended to the given output directory, the protocol and the pca directory.')
+      dest='pca_model_filename', default=None, help='The (relative) filename of the PCA model. \
+It will overwrite the value in the configuration file if any. \
+Default is the value in the configuration file. It is then appended to the given output directory, \
+the protocol and the pca directory.')
   parser.add_argument('--plda-dir', metavar='STR', type=str,
-      dest='plda_dir', default=None, help='The subdirectory where the PLDA data are stored. It will overwrite the value in the configuration file if any. Default is the value in the configuration file. It is appended to the given output directory and the protocol.')
+      dest='plda_dir', default=None, help='The subdirectory where the PLDA data are stored. \
+It will overwrite the value in the configuration file if any. Default is the value \
+in the configuration file. It is appended to the given output directory and the protocol.')
   parser.add_argument('--plda-model-filename', metavar='STR', type=str,
-      dest='plda_model_filename', default=None, help='The (relative) filename of the PLDABase model. It will overwrite the value in the configuration file if any. Default is the value in the configuration file. It is then appended to the given output directory, the protocol and the plda directory.')
+      dest='plda_model_filename', default=None, help='The (relative) filename of the PLDABase model. \
+It will overwrite the value in the configuration file if any. \
+Default is the value in the configuration file. It is then appended \
+to the given output directory, the protocol and the plda directory.')
   parser.add_argument('-g', '--group', metavar='STR', type=str, nargs='+',
-      dest='group', default=['dev','eval'], help='Database group (\'dev\' or \'eval\') for which to enroll models and compute scores.')
+      dest='group', default=['dev','eval'], \
+help='Database group (\'dev\' or \'eval\') for which to enroll models and compute scores.')
   parser.add_argument('-f', '--force', dest='force', action='store_true',
       default=False, help='Force to erase former data if already exist')
   parser.add_argument('--grid', dest='grid', action='store_true',

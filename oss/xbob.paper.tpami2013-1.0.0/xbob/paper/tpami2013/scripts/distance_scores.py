@@ -27,23 +27,34 @@ def main():
   parser = argparse.ArgumentParser(description=__doc__,
       formatter_class=argparse.RawDescriptionHelpFormatter)
   parser.add_argument('-c', '--config-file', metavar='FILE', type=str,
-      dest='config_file', default='xbob/paper/tpami2013/config_multipie.py', help='Filename of the configuration file to use to run the script on the grid (defaults to "%(default)s")')
+      dest='config_file', default='xbob/paper/tpami2013/config_multipie.py', \
+	help='Filename of the configuration file to use to run the script on \
+		the grid (defaults to "%(default)s")')
   parser.add_argument('-g', '--group', metavar='STR', type=str,
-      dest='group', default='dev', help='Database group (\'dev\' or \'eval\') for which to retrieve models (defaults to "%(default)s").')
+      dest='group', default='dev', help='Database group (\'dev\' or \'eval\') \
+		for which to retrieve models (defaults to "%(default)s").')
   parser.add_argument('--output-dir', metavar='FILE', type=str,
       dest='output_dir', default='output', help='The base output directory for everything (models, scores, etc.).')
   parser.add_argument('--features-dir', metavar='FILE', type=str,
-      dest='features_dir', default=None, help='The directory where the features are stored. It will overwrite the value in the configuration file if any. Default is the value in the configuration file, that is prepended by the given output directory and the protocol.')
+      dest='features_dir', default=None, help='The directory where the features are stored. \
+	It will overwrite the value in the configuration file if any. \
+	Default is the value in the configuration file, \
+	that is prepended by the given output directory and the protocol.')
   parser.add_argument('--algorithm-dir', metavar='FILE', type=str,
-      dest='algorithm_dir', default='default_algorithm', help='The relative directory of the algorithm that will contain the models and the scores. It is appended to the given output directory and the protocol.')
+      dest='algorithm_dir', default='default_algorithm', help='The relative directory of the algorithm \
+	that will contain the models and the scores. \
+	It is appended to the given output directory and the protocol.')
   parser.add_argument('--distance', metavar='STR', type=str,
       dest='distance', default='euclidean', help='The distance to use, when computing scores.')
   parser.add_argument('-p', '--protocol', metavar='STR', type=str,
-      dest='protocol', default=None, help='The protocol of the database to consider. It will overwrite the value in the configuration file if any. Default is the value in the configuration file.')
+      dest='protocol', default=None, help='The protocol of the database to consider. \
+	It will overwrite the value in the configuration file if any. \
+	Default is the value in the configuration file.')
   parser.add_argument('-f', '--force', dest='force', action='store_true',
       default=False, help='Force to erase former data if already exist')
   parser.add_argument('--grid', dest='grid', action='store_true',
-      default=False, help='If set, assumes it is being run using a parametric grid job. It orders all ids to be processed and picks the one at the position given by ${SGE_TASK_ID}-1')
+      default=False, help='If set, assumes it is being run using a parametric grid job. \
+	It orders all ids to be processed and picks the one at the position given by ${SGE_TASK_ID}-1')
   args = parser.parse_args()
 
   # Loads the configuration 
@@ -102,7 +113,8 @@ def main():
         print("Scores file '%s' already exists." % sc_nonorm_filename)
       else:
         # Gets the probe sample list
-        probe_filenames = sorted(config.db.objects(groups=args.group, protocol=protocol, purposes="probe", model_ids=(model_id,)), key=lambda f: f.path)
+        probe_filenames = sorted(config.db.objects(groups=args.group, protocol=protocol, purposes="probe", \
+							model_ids=(model_id,)), key=lambda f: f.path)
         
         # If we are on a grid environment, just keep the required split of samples
         if args.grid:
