@@ -1,0 +1,26 @@
+[console_scripts]
+pca_features.py = xbob.paper.tpami2013.scripts.pca_features:main
+toolchain_pca.py = xbob.paper.tpami2013.scripts.toolchain_pca:main
+plda_enroll.py = xbob.paper.tpami2013.scripts.plda_enroll:main
+toolchain_lbph.py = xbob.paper.tpami2013.scripts.toolchain_lbph:main
+experiment_plda_subworld.py = xbob.paper.tpami2013.scripts.experiment_plda_subworld:main
+plot_table2.py = xbob.paper.tpami2013.scripts.plot_table2:main
+lda_train.py = xbob.paper.tpami2013.scripts.lda_train:main
+experiment_pcaplda_lfw.py = xbob.paper.tpami2013.scripts.experiment_pcaplda_lfw:main
+distance_scores.py = xbob.paper.tpami2013.scripts.distance_scores:main
+plda_train.py = xbob.paper.tpami2013.scripts.plda_train:main
+plda_example_iris.py = xbob.paper.tpami2013.scripts.plda_example_iris:main
+plot_figure2.py = xbob.paper.tpami2013.scripts.plot_figure2:main
+meanmodel_enroll.py = xbob.paper.tpami2013.scripts.meanmodel_enroll:main
+toolchain_lda.py = xbob.paper.tpami2013.scripts.toolchain_lda:main
+toolchain_pcaplda.py = xbob.paper.tpami2013.scripts.toolchain_pcaplda:main
+lbph_extraction.py = xbob.paper.tpami2013.scripts.lbph_extraction:main
+concatenate_scores.py = xbob.paper.tpami2013.scripts.concatenate_scores:main
+plot_table3.py = xbob.paper.tpami2013.scripts.plot_table3:main
+linear_project.py = xbob.paper.tpami2013.scripts.linear_project:main
+lfw_features.py = xbob.paper.tpami2013.scripts.lfw_features:main
+toolchain_plda.py = xbob.paper.tpami2013.scripts.toolchain_plda:main
+plda_scores.py = xbob.paper.tpami2013.scripts.plda_scores:main
+lbph_features.py = xbob.paper.tpami2013.scripts.lbph_features:main
+pca_train.py = xbob.paper.tpami2013.scripts.pca_train:main
+

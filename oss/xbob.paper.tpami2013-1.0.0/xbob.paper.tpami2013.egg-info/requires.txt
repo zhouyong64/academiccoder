@@ -1,0 +1,6 @@
+setuptools
+bob >= 1.2.0
+xbob.db.multipie
+xbob.db.verification.filelist
+six
+gridtk
